@@ -42,7 +42,7 @@ function Nav() {
         <Link href="#" className="text-black hover:text-gray-500">Shop</Link>
         <Link href="/customize" className="text-black hover:text-gray-500">Customize</Link>
         <Link href="/contact_us" className="text-black hover:text-gray-500">Contact Us</Link>
-        <Linl href="#" className="text-black hover:text-gray-500">Blog</Linl>
+        <Link href="#" className="text-black hover:text-gray-500">Blog</Link>
       </div>
 
       {/* Search Input & Currency Dropdown (Desktop) */}

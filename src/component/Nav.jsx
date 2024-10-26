@@ -42,7 +42,7 @@ function Nav() {
         <Link href="#" className="text-black hover:text-gray-500">Shop</Link>
         <Link href="/customize" className="text-black hover:text-gray-500">Customize</Link>
         <Link href="/contact_us" className="text-black hover:text-gray-500">Contact Us</Link>
-        <Lin href="#" className="text-black hover:text-gray-500">Blog</Lin>
+        <Linl href="#" className="text-black hover:text-gray-500">Blog</Linl>
       </div>
 
       {/* Search Input & Currency Dropdown (Desktop) */}
@@ -80,11 +80,11 @@ function Nav() {
       {menuOpen && (
         <div className="absolute top-16 left-0 right-0 bg-white shadow-md p-4 z-50 md:hidden">
           <div className="flex flex-col items-center gap-4">
-            <a href="#" className="text-black hover:text-gray-800">Home</a>
-            <a href="#" className="text-black hover:text-gray-800">Shop</a>
-            <a href="/customize" className="text-black hover:text-gray-800">Customize</a>
-            <a href="/contact_us" className="text-black hover:text-gray-800">Contact Us</a>
-            <a href="#" className="text-black hover:text-gray-800">Blog</a>
+            <Link href="#" className="text-black hover:text-gray-800">Home</Link>
+            <Link href="#" className="text-black hover:text-gray-800">Shop</Link>
+            <Link href="/customize" className="text-black hover:text-gray-800">Customize</Link>
+            <Link href="/contact_us" className="text-black hover:text-gray-800">Contact Us</Link>
+            <Link href="#" className="text-black hover:text-gray-800">Blog</Link>
             {/* Currency Dropdown */}
             <select className="border border-gray-300 rounded-full ring-1 ring-black py-1 px-2 text-black">
               <option value="INR">₹ 🇮🇳</option>

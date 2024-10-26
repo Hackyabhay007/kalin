@@ -38,11 +38,11 @@ function Nav() {
 
       {/* Center - Navigation Links (Desktop) */}
       <div className="flex-grow hidden md:flex justify-end pr-20 font-semibold items-center gap-8">
-        <a href="/" className="text-black hover:text-gray-500">Home</a>
-        <a href="#" className="text-black hover:text-gray-500">Shop</a>
+        <Link href="/" className="text-black hover:text-gray-500">Home</Link>
+        <Link href="#" className="text-black hover:text-gray-500">Shop</Link>
         <Link href="/customize" className="text-black hover:text-gray-500">Customize</Link>
-        <a href="/contact_us" className="text-black hover:text-gray-500">Contact Us</a>
-        <a href="#" className="text-black hover:text-gray-500">Blog</a>
+        <Link href="/contact_us" className="text-black hover:text-gray-500">Contact Us</Link>
+        <Lin href="#" className="text-black hover:text-gray-500">Blog</Lin>
       </div>
 
       {/* Search Input & Currency Dropdown (Desktop) */}

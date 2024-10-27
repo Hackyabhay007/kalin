@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 function Story() {
@@ -26,9 +27,9 @@ function Story() {
             Hailing from a small village known for its weaving heritage, Sanurri learned the craft from generations of artisans before him.
           </p>
           {/* Read More Button */}
-          <button className="bg-white text-black w-32 rounded-lg py-2 px-4 my-4 hover:bg-gray-900 font-semibold">
+         <Link href="/Story"><button className="bg-white text-black w-32 rounded  py-2 px-4 mt-4  ">
             Read More
-          </button>
+          </button></Link>
         </div>
       </div>
 
@@ -50,9 +51,9 @@ function Story() {
         </div>
 
         {/* Read More Button */}
-        <button className="bg-black text-white w-36 rounded-lg py-2 px-4 mt-4 hover:bg-gray-900 font-semibold">
+      <Link href="/Story"><button className="bg-black text-white w-36 rounded border hover:border-black py-2 px-4 mt-4 hover:bg-white hover:text-black ">
           Read More
-        </button>
+        </button></Link>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 "use client"
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -32,7 +33,7 @@ function Nav() {
         </div>
         
         {/* Logo */}
-        <img src="https://s3-alpha-sig.figma.com/img/c9a3/651f/090c30b7dec85d63787dbeeb98e5322d?Expires=1730678400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=gLWPMgr9kInHLYkRA37zJB7-yKtjoVH-JywCOxCMgeWKjif6w2Xh8Y5jdg6~z6DpdDNl6~aASIAv1KCNmO90ivTin4bIUapsfQedp2LEElFVNt~B1nMpDfk8QiiRPwlNIb8DYDR07idFREd4z3qS9GLxT4e4gd05FwKizZG3PcKv0iiQw~Q0VnGC9jKp2cYDrjPd7WWCGc9VpIrJaPGuD79cU73yFBf7sTs-1QsJi8OcCkhzKBApKBY1raBVuhkooUfsAW24OuR1JVez9oMTy-kxeO2~RKpAmBnKVuqsjDEP51GrjSgmR9ko4~5pS19JyJplYVadc9KjWs0mKDrQjg__" alt="" className='w-16 mx-20' />
+        <Image src="https://s3-alpha-sig.figma.com/img/c9a3/651f/090c30b7dec85d63787dbeeb98e5322d?Expires=1730678400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=gLWPMgr9kInHLYkRA37zJB7-yKtjoVH-JywCOxCMgeWKjif6w2Xh8Y5jdg6~z6DpdDNl6~aASIAv1KCNmO90ivTin4bIUapsfQedp2LEElFVNt~B1nMpDfk8QiiRPwlNIb8DYDR07idFREd4z3qS9GLxT4e4gd05FwKizZG3PcKv0iiQw~Q0VnGC9jKp2cYDrjPd7WWCGc9VpIrJaPGuD79cU73yFBf7sTs-1QsJi8OcCkhzKBApKBY1raBVuhkooUfsAW24OuR1JVez9oMTy-kxeO2~RKpAmBnKVuqsjDEP51GrjSgmR9ko4~5pS19JyJplYVadc9KjWs0mKDrQjg__" alt="" className='w-16 mx-20' width={200} height={200} />
         
       </div>
 
@@ -42,7 +43,7 @@ function Nav() {
         <Link href="#" className="text-black hover:text-gray-500">Shop</Link>
         <Link href="/customize" className="text-black hover:text-gray-500">Customize</Link>
         <Link href="/contact_us" className="text-black hover:text-gray-500">Contact Us</Link>
-        <Linl href="#" className="text-black hover:text-gray-500">Blog</Linl>
+        <Link href="/Blog" className="text-black hover:text-gray-500">Blog</Link>
       </div>
 
       {/* Search Input & Currency Dropdown (Desktop) */}
@@ -80,11 +81,11 @@ function Nav() {
       {menuOpen && (
         <div className="absolute top-16 left-0 right-0 bg-white shadow-md p-4 z-50 md:hidden">
           <div className="flex flex-col items-center gap-4">
-            <Link href="#" className="text-black hover:text-gray-800">Home</Link>
+            <Link href="/" className="text-black hover:text-gray-800">Home</Link>
             <Link href="#" className="text-black hover:text-gray-800">Shop</Link>
             <Link href="/customize" className="text-black hover:text-gray-800">Customize</Link>
             <Link href="/contact_us" className="text-black hover:text-gray-800">Contact Us</Link>
-            <Link href="#" className="text-black hover:text-gray-800">Blog</Link>
+            <Link href="/Blog" className="text-black hover:text-gray-800">Blog</Link>
             {/* Currency Dropdown */}
             <select className="border border-gray-300 rounded-full ring-1 ring-black py-1 px-2 text-black">
               <option value="INR">₹ 🇮🇳</option>

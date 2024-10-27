@@ -1,5 +1,12 @@
 /* src/styles/globals.css */
 @import 'remixicon/fonts/remixicon.css';
+@import '@fontsource/cabin/400.css'; /* Regular weight */
+@import '@fontsource/cabin/700.css'; /* Bold weight */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  font-family: 'Cabin', sans-serif; /* Set Cabin as the default font */
+}

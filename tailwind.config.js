@@ -6,7 +6,11 @@ module.exports = {
     './src/**/*.{js,jsx,ts,tsx}', // Ensure this is included if using src folder
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        cabin: ['Cabin', 'sans-serif'], // Adding Cabin font
+      },
+    },
   },
   plugins: [],
 };

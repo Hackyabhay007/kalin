@@ -1,7 +1,7 @@
 // src/pages/policies/[policies].js
 import React from 'react';
 import { useRouter } from 'next/router';
-import policyData from './policyData';
+import policyData from '../../../public/local/policyData/policyData';
 import Nav from '@/component/Nav';
 import Footer from '@/component/Footer';
 import Policy from './Policy'; // Import the Policy component

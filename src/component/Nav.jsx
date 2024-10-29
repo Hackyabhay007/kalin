@@ -40,7 +40,7 @@ function Nav() {
       {/* Center - Navigation Links (Desktop) */}
       <div className="flex-grow hidden md:flex justify-end pr-20 font-semibold items-center gap-8">
         <Link href="/" className="text-black hover:text-gray-500">Home</Link>
-        <Link href="#" className="text-black hover:text-gray-500">Shop</Link>
+        <Link href="/customize/Shop" className="text-black hover:text-gray-500">Shop</Link>
         <Link href="/customize" className="text-black hover:text-gray-500">Customize</Link>
         <Link href="/contact_us" className="text-black hover:text-gray-500">Contact Us</Link>
         <Link href="/Blog" className="text-black hover:text-gray-500">Blog</Link>
@@ -71,9 +71,9 @@ function Nav() {
         <button className="text-black hover:text-gray-800">
           <i className="ri-shopping-bag-line text-2xl"></i>
         </button>
-        <button className="text-black hover:text-gray-800">
+      <Link href="/login"><button className="text-black hover:text-gray-800">
           <i className="ri-user-line text-2xl"></i>
-        </button>
+        </button></Link>
         
       </div>
 

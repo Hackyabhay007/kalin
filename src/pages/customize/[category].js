@@ -100,7 +100,78 @@ const categoryData = {
       { id: 5, imgSrc: 'https://images2.naintrading.com/data/carpets/66-100783-155x105-01.jpg', price: 'RS 1700 sq(Ft)', description: 'Description for Image 5' },
     ],
   },
-  // Add more categories as needed
+   'Shop': {
+    title: "Shop",
+    description: "",
+    products: [
+      {
+        id: 1,
+        imgSrc: 'https://images2.naintrading.com/data/carpets/66-100783-155x105-01.jpg',
+        price: 'RS 1500 sq(Ft)',
+        description: 'Description for Image 1',
+      },
+      {
+        id: 2,
+        imgSrc: 'https://images2.naintrading.com/data/carpets/66-100783-155x105-01.jpg',
+        price: 'RS 1500 sq(Ft)',
+        description: 'Description for Image 2',
+      },
+      {
+        id: 3,
+        imgSrc: 'https://images2.naintrading.com/data/carpets/66-100783-155x105-01.jpg',
+        price: 'RS 1500 sq(Ft)',
+        description: 'Description for Image 3',
+      },
+      {
+        id: 4,
+        imgSrc: 'https://images2.naintrading.com/data/carpets/66-100783-155x105-01.jpg',
+        price: 'RS 1500 sq(Ft)',
+        description: 'Description for Image 4',
+      },
+      {
+        id: 5,
+        imgSrc: 'https://images2.naintrading.com/data/carpets/66-100783-155x105-01.jpg',
+        price: 'RS 1500 sq(Ft)',
+        description: 'Description for Image 5',
+      },
+      {
+        id: 6,
+        imgSrc: 'https://images2.naintrading.com/data/carpets/66-100783-155x105-01.jpg',
+        price: 'RS 1500 sq(Ft)',
+        description: 'Description for Image 6',
+      },
+      {
+        id: 7,
+        imgSrc: 'https://images2.naintrading.com/data/carpets/66-100783-155x105-01.jpg',
+        price: 'RS 1500 sq(Ft)',
+        description: 'Description for Image 7',
+      },
+      {
+        id: 8,
+        imgSrc: 'https://images2.naintrading.com/data/carpets/66-100783-155x105-01.jpg',
+        price: 'RS 1500 sq(Ft)',
+        description: 'Description for Image 8',
+      },
+      {
+        id: 9,
+        imgSrc: 'https://images2.naintrading.com/data/carpets/66-100783-155x105-01.jpg',
+        price: 'RS 1500 sq(Ft)',
+        description: 'Description for Image 9',
+      },
+      {
+        id: 10,
+        imgSrc: 'https://images2.naintrading.com/data/carpets/66-100783-155x105-01.jpg',
+        price: 'RS 1500 sq(Ft)',
+        description: 'Description for Image 10',
+      },
+      {
+        id: 11,
+        imgSrc: 'https://images2.naintrading.com/data/carpets/66-100783-155x105-01.jpg',
+        price: 'RS 1500 sq(Ft)',
+        description: 'Description for Image 11',
+      },
+    ],
+  }, 
 };
 
 const CategoryPage = ({ categoryData }) => {

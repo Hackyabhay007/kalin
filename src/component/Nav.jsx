@@ -82,7 +82,7 @@ function Nav() {
         <div className="absolute top-16 left-0 right-0 bg-white shadow-md p-4 z-50 md:hidden">
           <div className="flex flex-col items-center gap-4">
             <Link href="/" className="text-black hover:text-gray-800">Home</Link>
-            <Link href="#" className="text-black hover:text-gray-800">Shop</Link>
+            <Link href="/customize/Shop" className="text-black hover:text-gray-800">Shop</Link>
             <Link href="/customize" className="text-black hover:text-gray-800">Customize</Link>
             <Link href="/contact_us" className="text-black hover:text-gray-800">Contact Us</Link>
             <Link href="/Blog" className="text-black hover:text-gray-800">Blog</Link>
@@ -98,13 +98,13 @@ function Nav() {
 
       {/* Search Input for Mobile */}
       {searchVisible && (
-        <div className="absolute top-16 left-1/2 transform -translate-x-1/2 bg-white shadow-md p-4 z-50 md:hidden flex items-center gap-2">
+        <div className="absolute top-16 left-1/2 w-screen transform -translate-x-1/2 bg-white shadow-md p-4 z-50 md:hidden flex items-center gap-2">
           <input
             type="text"
             placeholder="Search..."
-            className="border border-gray-300 rounded-full ring-1 ring-black py-1 px-3 pl-10 focus:outline-none"
+            className="border border-gray-300 w-screen rounded-full ring-1 ring-black py-1 px-3 pl-10 focus:outline-none"
           />
-          <i className="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2"></i>
+          <i className="ri-search-line absolute left-6 top-1/2   transform -translate-y-1/2"></i>
         </div>
       )}
       

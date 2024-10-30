@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 
 function Customize() {
@@ -44,9 +45,9 @@ function Customize() {
       </div>
       {/* Customize Now Button */}
       <div className="flex justify-center mt-5">
-        <button className="bg-black text-white rounded-lg py-2 px-4 hover:bg-gray-900">
+       <Link href="/customize"><button className="bg-black text-white rounded-lg py-2 px-4 hover:bg-gray-900">
           Customize Now
-        </button>
+        </button></Link>
       </div>
     </div>
   );

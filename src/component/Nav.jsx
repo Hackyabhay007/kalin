@@ -68,9 +68,9 @@ function Nav() {
         <button className="text-black hover:text-gray-800">
           <i className="ri-heart-line text-2xl"></i>
         </button>
-        <button className="text-black hover:text-gray-800">
+      <Link href="/cart"><button className="text-black hover:text-gray-800">
           <i className="ri-shopping-bag-line text-2xl"></i>
-        </button>
+        </button></Link>
       <Link href="/login"><button className="text-black hover:text-gray-800">
           <i className="ri-user-line text-2xl"></i>
         </button></Link>
@@ -113,9 +113,9 @@ function Nav() {
         <button className="text-black hover:text-gray-800">
           <i className="ri-heart-line text-2xl"></i>
         </button>
-        <button className="text-black hover:text-gray-800">
+       <Link href="/cart"><button className="text-black hover:text-gray-800">
           <i className="ri-shopping-bag-line text-2xl"></i>
-        </button>
+        </button></Link>
         <Link href="/login"><button className="text-black hover:text-gray-800">
           <i className="ri-user-line text-2xl"></i>
         </button></Link>

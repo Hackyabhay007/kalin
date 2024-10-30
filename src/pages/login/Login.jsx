@@ -13,7 +13,7 @@ function Login() {
         <form className="space-y-6">
           {/* Country Code and Phone Input */}
           <div className="flex items-center border border-gray-400 rounded">
-            <select className=" p-2 rounded-l-sm text-sm py-3 border-r-2">
+            <select className=" p-2 rounded-l-sm  py-2 border-r-2">
               <option value="+91">+91 (India)</option>
               <option value="+1">+1 (USA)</option>
               <option value="+44">+44 (UK)</option>

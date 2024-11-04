@@ -1,45 +1,185 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+import { databases, storage } from "@/appwrite";
+import { v4 as uuidv4 } from "uuid"; // Generate unique IDs for images
 
 function Product() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    category: '',
-    stock: '',
+    id: null, // To store the ID of the product for editing
+    name: "",
+    description: "",
+    price: "",
+    category: [],
+    stock: "",
     mainImage: null,
     additionalImages: [],
     colors: [],
     sizes: [],
   });
+  const [products, setProducts] = useState([]); // Store the list of products
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Product Data:', formData); // Replace this with your submission logic (e.g., API call)
-    // Reset form after submission
-    setFormData({
-      name: '',
-      description: '',
-      price: '',
-      category: '',
-      stock: '',
-      mainImage: null,
-      additionalImages: [],
-      colors: [],
-      sizes: [],
-    });
-    setShowForm(false); // Close the form
+  const uploadImage = async (file) => {
+    if (!file) return null; // Handle case where no file is provided
+    const fileId = uuidv4(); // Generate a unique ID for the file
+    const response = await storage.createFile(
+      "6728694d000af27c9294", // Bucket ID
+      fileId, // Unique file ID
+      file // The file to upload
+    );
+    return response.$id; // Return the file ID from the response
   };
 
-  // Handle input change
+  const [availableCategories, setAvailableCategories] = useState([]);
+  const [availableColors, setAvailableColors] = useState([]);
+  const [availableSizes, setAvailableSizes] = useState([]);
+
+  // Fetch options from the database
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await databases.listDocuments(
+          "67269e330009154de759",
+          "67287391003a9b859371"
+        );
+        setAvailableCategories(response.documents);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    const fetchColors = async () => {
+      try {
+        const response = await databases.listDocuments(
+          "67269e330009154de759",
+          "672888fb001f6df04958"
+        );
+        setAvailableColors(response.documents);
+      } catch (error) {
+        console.error("Error fetching colors:", error);
+      }
+    };
+
+    const fetchSizes = async () => {
+      try {
+        const response = await databases.listDocuments(
+          "67269e330009154de759",
+          "672894d500200dd978d1"
+        );
+        setAvailableSizes(response.documents);
+      } catch (error) {
+        console.error("Error fetching sizes:", error);
+      }
+    };
+
+    fetchCategories();
+    fetchColors();
+    fetchSizes();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Upload the main image
+      const mainImageId = await uploadImage(formData.mainImage);
+
+      // Upload additional images
+      const additionalImageIds = await Promise.all(
+        formData.additionalImages.map(uploadImage)
+      );
+
+      // If editing a product, update the document; otherwise, create a new one
+      if (formData.id) {
+        await databases.updateDocument(
+          "67269e330009154de759", // Database ID
+          "67285c350037a7e0be53", // Collection ID
+          formData.id, // Product ID
+          {
+            name: formData.name,
+            description: formData.description,
+            price: parseInt(formData.price),
+            category: formData.category,
+            stock: parseInt(formData.stock),
+            mainImage: mainImageId,
+            additionalImages: additionalImageIds,
+            colors: formData.colors,
+            sizes: formData.sizes,
+          }
+        );
+      } else {
+        // Create a new document in Appwrite database
+        await databases.createDocument(
+          "67269e330009154de759", // Database ID
+          "67285c350037a7e0be53", // Collection ID
+          uuidv4(), // Generate unique document ID
+          {
+            name: formData.name,
+            description: formData.description,
+            price: parseInt(formData.price),
+            category: formData.category,
+            stock: parseInt(formData.stock),
+            mainImage: mainImageId,
+            additionalImages: additionalImageIds,
+            colors: formData.colors,
+            sizes: formData.sizes,
+          }
+        );
+      }
+
+      // Reset form data and hide the form
+      setFormData({
+        id: null,
+        name: "",
+        description: "",
+        price: "",
+        category: [],
+        stock: "",
+        mainImage: null,
+        additionalImages: [],
+        colors: [],
+        sizes: [],
+      });
+      setShowForm(false);
+      fetchProducts(); // Refresh the product list
+    } catch (error) {
+      console.error("Error adding/updating product:", error);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await databases.listDocuments(
+        "67269e330009154de759",
+        "67285c350037a7e0be53"
+      );
+      setProducts(response.documents);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  const handleEdit = (product) => {
+    setFormData(product); // Populate form with product data
+    setShowForm(true); // Show form for editing
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await databases.deleteDocument(
+        "67269e330009154de759",
+        "67285c350037a7e0be53",
+        id
+      );
+      fetchProducts(); // Refresh the product list
+    } catch (error) {
+      console.error("Error deleting product:", error);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle file uploads
   const handleFileChange = (e) => {
     const files = e.target.files;
     if (files.length > 0) {
@@ -50,128 +190,233 @@ function Product() {
   const handleAdditionalImagesChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length + formData.additionalImages.length <= 3) {
-      setFormData({ ...formData, additionalImages: [...formData.additionalImages, ...files] });
+      setFormData({
+        ...formData,
+        additionalImages: [...formData.additionalImages, ...files],
+      });
     } else {
-      alert('You can only upload up to 3 additional images.');
+      alert("You can only upload up to 3 additional images.");
     }
   };
 
-  // Show form for adding products
+  const handleCategoryChange = (e) => {
+    const { value } = e.target;
+    setFormData((prevData) => {
+      const updatedCategories = prevData.category.includes(value)
+        ? prevData.category.filter((cat) => cat !== value)
+        : [...prevData.category, value];
+      return { ...prevData, category: updatedCategories };
+    });
+  };
+
+  const handleColorChange = (e) => {
+    const { value } = e.target;
+    setFormData((prevData) => {
+      const updatedColors = prevData.colors.includes(value)
+        ? prevData.colors.filter((color) => color !== value)
+        : [...prevData.colors, value];
+      return { ...prevData, colors: updatedColors };
+    });
+  };
+
+  const handleSizeChange = (e) => {
+    const { value } = e.target;
+    setFormData((prevData) => {
+      const updatedSizes = prevData.sizes.includes(value)
+        ? prevData.sizes.filter((size) => size !== value)
+        : [...prevData.sizes, value];
+      return { ...prevData, sizes: updatedSizes };
+    });
+  };
+
   const toggleForm = () => {
     setShowForm(!showForm);
   };
+
+  useEffect(() => {
+    fetchProducts(); // Fetch products on mount
+  }, []);
 
   return (
     <div className="p-6 bg-white border border-black rounded-lg shadow-md">
       <h1 className="text-2xl mb-4">Product Management</h1>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl">Products</h2>
-        <button 
-          onClick={toggleForm} 
-          className="bg-blue-500 text-white px-4 py-2 rounded">
-          Add Product
+        <button
+          onClick={toggleForm}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          {showForm ? "Cancel" : "Add Product"}
         </button>
       </div>
 
       {showForm && (
         <form onSubmit={handleSubmit} className="mb-4">
           <div className="mb-2">
-            <input 
-              type="text" 
-              name="name" 
-              placeholder="Product Name" 
+            <input
+              type="text"
+              name="name"
+              placeholder="Product Name"
               className="border rounded px-2 py-1 w-full"
-              onChange={handleChange} 
-              required 
+              value={formData.name}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="mb-2">
-            <textarea 
-              name="description" 
-              placeholder="Description" 
+            <textarea
+              name="description"
+              placeholder="Description"
               className="border rounded px-2 py-1 w-full"
-              onChange={handleChange} 
-              required 
+              value={formData.description}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="mb-2">
-            <input 
-              type="number" 
-              name="price" 
-              placeholder="Price (in Rupees)" 
+            <input
+              type="number"
+              name="price"
+              placeholder="Price (in Rupees)"
               className="border rounded px-2 py-1 w-full"
-              onChange={handleChange} 
-              required 
+              value={formData.price}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="mb-2">
-            <input 
-              type="text" 
-              name="category" 
-              placeholder="Category" 
+            <label className="block">Categories:</label>
+            <div className="flex flex-col">
+              {availableCategories.map((category) => (
+                <label key={category.$id}>
+                  <input
+                    type="checkbox"
+                    value={category.category}
+                    onChange={handleCategoryChange}
+                    checked={formData.category.includes(category.category)}
+                    className="mr-2"
+                  />
+                  {category.category}
+                </label>
+              ))}
+            </div>
+          </div>
+          <div className="mb-2">
+            <input
+              type="number"
+              name="stock"
+              placeholder="Stock"
               className="border rounded px-2 py-1 w-full"
-              onChange={handleChange} 
-              required 
+              value={formData.stock}
+              onChange={handleChange}
+              required
             />
           </div>
           <div className="mb-2">
-            <input 
-              type="number" 
-              name="stock" 
-              placeholder="Stock" 
-              className="border rounded px-2 py-1 w-full"
-              onChange={handleChange} 
-              required 
+            <label className="block">Main Image:</label>
+            <input
+              type="file"
+              onChange={handleFileChange}
+              accept="image/*"
+              required
             />
           </div>
           <div className="mb-2">
-            <input 
-              type="file" 
-              name="mainImage" 
-              onChange={handleFileChange} 
-              className="border rounded w-full"
-              required 
+            <label className="block">Additional Images:</label>
+            <input
+              type="file"
+              onChange={handleAdditionalImagesChange}
+              accept="image/*"
+              multiple
+              required
             />
           </div>
           <div className="mb-2">
-            <input 
-              type="file" 
-              multiple 
-              onChange={handleAdditionalImagesChange} 
-              className="border rounded w-full"
-            />
-            <small>You can upload up to 3 additional images.</small>
+            <label className="block">Colors:</label>
+            <div className="flex flex-col">
+              {availableColors.map((color) => (
+                <label key={color.$id}>
+                  <input
+                    type="checkbox"
+                    value={color.name}
+                    onChange={handleColorChange}
+                    checked={formData.colors.includes(color.name)}
+                    className=""
+                  />
+                  <span
+                    className="w-6 h-4 inline-block mx-2 rounded-sm border border-gray-300"
+                    style={{ backgroundColor: color.hex }}
+                  ></span>
+                  {color.name}
+                </label>
+              ))}
+            </div>
           </div>
-          <div className="flex items-center mb-2">
-            <label className="mr-2">Size:</label>
-            <select name="size" onChange={handleChange} required className="border rounded">
-              <option value="3x4">3x4</option>
-              {/* Add more sizes as needed */}
-            </select>
+          <div className="mb-2">
+            <label className="block">Sizes:</label>
+            <div className="flex flex-col">
+              {availableSizes.map((size) => (
+                <label key={size.$id}>
+                  <input
+                    type="checkbox"
+                    value={`${size.width}x${size.height}`} // Display as "width x height"
+                    onChange={handleSizeChange}
+                    checked={formData.sizes.includes(
+                      `${size.width}x${size.height}`
+                    )}
+                    className="mr-2"
+                  />
+                  {size.width} x {size.height}{" "}
+                  {/* Show size as width x height */}
+                </label>
+              ))}
+            </div>
           </div>
-          <div className="flex items-center mb-2">
-            <label className="mr-2">Colors:</label>
-            <input 
-              type="checkbox" 
-              name="colors" 
-              value="blue" 
-              onChange={(e) => {
-                const newColors = e.target.checked 
-                  ? [...formData.colors, e.target.value] 
-                  : formData.colors.filter(color => color !== e.target.value);
-                setFormData({ ...formData, colors: newColors });
-              }} 
-            />
-            <span>Blue</span>
-            {/* Add more color options as needed */}
-          </div>
-          <button 
-            type="submit" 
-            className="bg-green-500 text-white px-4 py-2 rounded">
-            Submit Product
+          <button
+            type="submit"
+            className="bg-green-500 text-white px-4 py-2 rounded"
+          >
+            {formData.id ? "Update Product" : "Add Product"}
           </button>
         </form>
       )}
+
+      <div>
+        {products.length > 0 ? (
+          <ul>
+            {products.map((product) => (
+              <li key={product.$id} className="border-b py-2">
+                {product.mainImage && (
+                  <img
+                    src={`https://cloud.appwrite.io/v1/storage/buckets/6728694d000af27c9294/files/${product.mainImage}/view?project=67269d9a0023bf3ae88a&mode=admin`}
+                    alt={product.name}
+                    className="mb-2 object-cover rounded w-16"
+                    width={128} // Adjust the width as needed
+                    height={128} // Adjust the height as needed
+                  />
+                )}
+                <p className="font-semibold">{product.name}</p>
+                <p>Price: {product.price} Rupees</p>
+                <p>Stock: {product.stock}</p>
+                <button
+                  onClick={() => handleEdit(product)}
+                  className="bg-yellow-500 text-white px-2 py-1 mr-2"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(product.$id)}
+                  className="bg-red-500 text-white px-2 py-1"
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No products available.</p>
+        )}
+      </div>
     </div>
   );
 }

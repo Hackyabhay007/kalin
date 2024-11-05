@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-// import { account } from '../appwrite';
 import { account } from '@/appwrite';
 
 function OTP() {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { databases, storage } from "@/appwrite";
 import { v4 as uuidv4 } from "uuid"; // Generate unique IDs for images
-
+const itemsPerPage = 20;
 function Product() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -17,17 +17,31 @@ function Product() {
     sizes: [],
   });
   const [products, setProducts] = useState([]); // Store the list of products
-
+  const [currentPage, setCurrentPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   const uploadImage = async (file) => {
-    if (!file) return null; // Handle case where no file is provided
+    if (!file) {
+      console.warn("No file provided for upload");
+      return null; // Handle case where no file is provided
+    }
+  
+    console.log("Uploading file:", file); // Check file details
     const fileId = uuidv4(); // Generate a unique ID for the file
-    const response = await storage.createFile(
-      "6728694d000af27c9294", // Bucket ID
-      fileId, // Unique file ID
-      file // The file to upload
-    );
-    return response.$id; // Return the file ID from the response
+  
+    try {
+      const response = await storage.createFile(
+        "6728694d000af27c9294", // Bucket ID
+        fileId, // Unique file ID
+        file // The file to upload
+      );
+      console.log('File uploaded successfully:', response); // Check the response
+      return response.$id; // Return the file ID from the response
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      throw error; // Re-throw the error for further handling
+    }
   };
+  
 
   const [availableCategories, setAvailableCategories] = useState([]);
   const [availableColors, setAvailableColors] = useState([]);
@@ -148,14 +162,15 @@ function Product() {
   const fetchProducts = async () => {
     try {
       const response = await databases.listDocuments(
-        "67269e330009154de759",
-        "67285c350037a7e0be53"
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID,
+        process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_PRODUCTS_ID
       );
-      setProducts(response.documents);
+      setProducts(response.documents); // Update product list with the latest documents
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
+  
 
   const handleEdit = (product) => {
     setFormData(product); // Populate form with product data

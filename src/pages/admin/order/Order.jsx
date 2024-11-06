@@ -1,20 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { databases } from '@/appwrite'; // Ensure you have Appwrite initialized
 
 function Order() {
-  // Sample data for demonstration
-  const [orders, setOrders] = useState([
-    { id: 1, productName: 'Product A', price: 200, quantity: 2, status: 'Processing' },
-    { id: 2, productName: 'Product B', price: 150, quantity: 1, status: 'Processing' },
-    { id: 3, productName: 'Product C', price: 300, quantity: 3, status: 'Processing' },
-  ]);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch orders from Appwrite on component mount
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await databases.listDocuments(
+          '67269e330009154de759', // Database ID
+          '6729a823001e6fb8f448'  // Orders Collection ID
+        );
+        const fetchedOrders = response.documents.map(order => ({
+          id: order.$id,
+          productName: order.name,
+          price: order.price,
+          quantity: order.quantity,
+          address: order.address,
+          status: order.status || 'Pending' // Default status to 'Pending' if not provided
+        }));
+        setOrders(fetchedOrders);
+      } catch (err) {
+        setError('Error fetching orders');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
 
   // Function to update the status of an order
-  const updateStatus = (id, newStatus) => {
-    const updatedOrders = orders.map(order => 
-      order.id === id ? { ...order, status: newStatus } : order
-    );
-    setOrders(updatedOrders);
+  const updateStatus = async (id, newStatus) => {
+    try {
+      await databases.updateDocument(
+        '67269e330009154de759', // Database ID
+        '6729a823001e6fb8f448', // Orders Collection ID
+        id,
+        { status: newStatus }
+      );
+      setOrders(prevOrders =>
+        prevOrders.map(order =>
+          order.id === id ? { ...order, status: newStatus } : order
+        )
+      );
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
   };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="p-4 bg-white border border-black rounded-sm">
@@ -27,6 +67,7 @@ function Order() {
             <th className="border border-black p-2">Product Name</th>
             <th className="border border-black p-2">Price</th>
             <th className="border border-black p-2">Quantity</th>
+            <th className="border border-black p-2">Address</th>
             <th className="border border-black p-2">Status</th>
             <th className="border border-black p-2">Actions</th>
           </tr>
@@ -38,26 +79,19 @@ function Order() {
               <td className="border border-black p-2">{order.productName}</td>
               <td className="border border-black p-2">{order.price} Rs</td>
               <td className="border border-black p-2">{order.quantity}</td>
+              <td className="border border-black p-2">{order.address}</td>
               <td className="border border-black p-2">{order.status}</td>
               <td className="border border-black p-2">
-                <button 
-                  onClick={() => updateStatus(order.id, 'Complete')}
-                  className="bg-green-500 text-white px-2 py-1 rounded-sm mr-2"
+                <select
+                  value={order.status}
+                  onChange={(e) => updateStatus(order.id, e.target.value)}
+                  className="px-2 py-1 border border-gray-300 rounded-sm"
                 >
-                  Complete
-                </button>
-                <button 
-                  onClick={() => updateStatus(order.id, 'Cancelled')}
-                  className="bg-red-500 text-white px-2 py-1 rounded-sm mr-2"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={() => updateStatus(order.id, 'Shipping')}
-                  className="bg-blue-500 text-white px-2 py-1 rounded-sm"
-                >
-                  Shipping
-                </button>
+                  <option value="Pending">Pending</option>
+                  <option value="Processing">Processing</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
               </td>
             </tr>
           ))}

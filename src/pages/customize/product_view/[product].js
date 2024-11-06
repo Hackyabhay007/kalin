@@ -95,7 +95,7 @@ const ProductPage = () => {
         {/* Center Column: Main Image */}
         <div className="w-3/5">
           <Image src={mainImageUrl} alt={product.name} width={500} height={500} className="object-contain" />
-          <p className="text-xl text-gray-700 mt-4">{product.description}</p>
+          <p className=" text-justify text-gray-700 mt-4">{product.description}</p>
         </div>
 </div>
         {/* Right Column: Product Details */}

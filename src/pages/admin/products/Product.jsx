@@ -19,28 +19,51 @@ function Product() {
   const [products, setProducts] = useState([]); // Store the list of products
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+
   const uploadImage = async (file) => {
-    if (!file) {
-      console.warn("No file provided for upload");
-      return null; // Handle case where no file is provided
+  if (!file) {
+    console.warn("No file provided for upload");
+    return null;
+  }
+
+  const fileId = uuidv4(); // Unique file ID
+  try {
+    const response = await storage.createFile(
+      "6728694d000af27c9294", // Bucket ID
+      fileId,
+      file
+    );
+    console.log('File uploaded successfully:', response);
+    return response.$id;
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    return null; // Return null if upload fails
+  }
+};
+
+// Function to handle uploading both main image and additional images
+const handleUpload = async () => {
+  try {
+    // Upload main image
+    const mainImageId = await uploadImage(formData.mainImage);
+    if (mainImageId) {
+      console.log("Main image uploaded with ID:", mainImageId);
     }
-  
-    console.log("Uploading file:", file); // Check file details
-    const fileId = uuidv4(); // Generate a unique ID for the file
-  
-    try {
-      const response = await storage.createFile(
-        "6728694d000af27c9294", // Bucket ID
-        fileId, // Unique file ID
-        file // The file to upload
-      );
-      console.log('File uploaded successfully:', response); // Check the response
-      return response.$id; // Return the file ID from the response
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      throw error; // Re-throw the error for further handling
-    }
-  };
+
+    // Upload additional images and gather IDs
+    const additionalImageIds = await Promise.all(
+      formData.additionalImages.map(async (image) => {
+        return await uploadImage(image);
+      })
+    );
+
+    console.log("Additional images uploaded with IDs:", additionalImageIds);
+    // Store the IDs in formData or send them to your backend as needed
+
+  } catch (error) {
+    console.error("Error during file uploads:", error);
+  }
+};
   
 
   const [availableCategories, setAvailableCategories] = useState([]);
@@ -201,7 +224,8 @@ function Product() {
       setFormData({ ...formData, mainImage: files[0] });
     }
   };
-
+  
+  // Function to handle additional images upload, limited to 3 images
   const handleAdditionalImagesChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length + formData.additionalImages.length <= 3) {

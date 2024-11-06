@@ -72,7 +72,7 @@ const Filter = ({ onApply }) => {
 
   return (
     <div
-      className="bg-white text-black font-thin h-auto p-5 w-72 overflow-y-scroll"
+      className="bg-white text-black font-thin h-[890px] shadow p-5 w-72 overflow-y-scroll"
       style={{
         scrollbarWidth: 'none', // Hides scrollbar in Firefox
         msOverflowStyle: 'none', // Hides scrollbar in IE and Edge
@@ -179,16 +179,16 @@ const Filter = ({ onApply }) => {
       </div>
 
       {/* Apply and Reset Buttons */}
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4 flex flex-col gap-2">
         <button
           onClick={handleApply}
-          className="w-full border border-black py-2 text-center rounded-none hover:bg-black hover:text-white"
+          className="w-full border border-black py-1 text-center rounded-none hover:bg-black hover:text-white"
         >
           Apply
         </button>
         <button
           onClick={handleReset}
-          className="w-full border border-black py-2 text-center rounded-none hover:bg-black hover:text-white"
+          className="w-full border border-black py-1 text-center rounded-none hover:bg-black hover:text-white"
         >
           Reset
         </button>

@@ -13,6 +13,7 @@ const ProductPage = () => {
   const [mainImage, setMainImage] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);  // Added state for selected color
 
   useEffect(() => {
     if (productId) {
@@ -128,8 +129,9 @@ const ProductPage = () => {
               {product.colors && product.colors.map((color) => (
                 <div
                   key={color}
+                  onClick={() => setSelectedColor(color)}  // Set selected color on click
                   style={{ backgroundColor: color }}
-                  className="w-8 h-8 rounded border"
+                  className={`w-8 h-8 rounded border cursor-pointer ${selectedColor === color ? 'border border-black' : ''}`}  // Add border on selected color
                 ></div>
               ))}
             </div>

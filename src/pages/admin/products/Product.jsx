@@ -19,27 +19,35 @@ function Product() {
   const [products, setProducts] = useState([]); // Store the list of products
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-
   const uploadImage = async (file) => {
-  if (!file) {
-    console.warn("No file provided for upload");
-    return null;
-  }
-
-  const fileId = uuidv4(); // Unique file ID
-  try {
-    const response = await storage.createFile(
-      "6728694d000af27c9294", // Bucket ID
-      fileId,
-      file
-    );
-    console.log('File uploaded successfully:', response);
-    return response.$id;
-  } catch (error) {
-    console.error("Error uploading file:", error);
-    return null; // Return null if upload fails
-  }
-};
+    if (!file) {
+      console.warn("No file provided for upload");
+      return null;
+    }
+  
+    // Log the file object to ensure it contains the expected properties
+    console.log("Uploading file:", file);
+  
+    if (!file.size) {
+      console.error("Invalid file structure, 'size' property is missing:", file);
+      return null;
+    }
+  
+    const fileId = uuidv4(); // Unique file ID
+    try {
+      const response = await storage.createFile(
+        "6728694d000af27c9294", // Bucket ID
+        fileId,
+        file
+      );
+      console.log('File uploaded successfully:', response);
+      return response.$id;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      return null; // Return null if upload fails
+    }
+  };
+  
 
 // Function to handle uploading both main image and additional images
 const handleUpload = async () => {
@@ -116,34 +124,47 @@ const handleUpload = async () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Upload the main image
-      const mainImageId = await uploadImage(formData.mainImage);
-
-      // Upload additional images
-      const additionalImageIds = await Promise.all(
-        formData.additionalImages.map(uploadImage)
-      );
-
-      // If editing a product, update the document; otherwise, create a new one
+      // Check if a main image exists, then upload
+      const mainImageId = formData.mainImage
+        ? await uploadImage(formData.mainImage)
+        : null; // If no main image, skip upload
+  
+      // Check if additional images exist, then upload
+      const additionalImageIds = formData.additionalImages.length
+        ? await Promise.all(formData.additionalImages.map(uploadImage))
+        : [];
+  
+      // Update the product if `formData.id` exists
       if (formData.id) {
+        const updateData = {
+          name: formData.name,
+          description: formData.description,
+          price: parseInt(formData.price),
+          category: formData.category,
+          stock: parseInt(formData.stock),
+          mainImage: mainImageId,
+          additionalImages: additionalImageIds,
+          colors: formData.colors,
+          sizes: formData.sizes,
+        };
+  
+        // Remove null values if main image or additional images are not updated
+        Object.keys(updateData).forEach(key => {
+          if (updateData[key] === null || (Array.isArray(updateData[key]) && updateData[key].length === 0)) {
+            delete updateData[key];
+          }
+        });
+        
+  
+        // Update the document in Appwrite
         await databases.updateDocument(
           "67269e330009154de759", // Database ID
           "67285c350037a7e0be53", // Collection ID
           formData.id, // Product ID
-          {
-            name: formData.name,
-            description: formData.description,
-            price: parseInt(formData.price),
-            category: formData.category,
-            stock: parseInt(formData.stock),
-            mainImage: mainImageId,
-            additionalImages: additionalImageIds,
-            colors: formData.colors,
-            sizes: formData.sizes,
-          }
+          updateData
         );
       } else {
-        // Create a new document in Appwrite database
+        // Create a new document if `formData.id` does not exist
         await databases.createDocument(
           "67269e330009154de759", // Database ID
           "67285c350037a7e0be53", // Collection ID
@@ -161,8 +182,8 @@ const handleUpload = async () => {
           }
         );
       }
-
-      // Reset form data and hide the form
+  
+      // Reset form data after submission
       setFormData({
         id: null,
         name: "",
@@ -177,11 +198,12 @@ const handleUpload = async () => {
       });
       setShowForm(false);
       fetchProducts(); // Refresh the product list
+  
     } catch (error) {
       console.error("Error adding/updating product:", error);
     }
   };
-
+  
   const fetchProducts = async () => {
     try {
       const response = await databases.listDocuments(
@@ -220,6 +242,7 @@ const handleUpload = async () => {
 
   const handleFileChange = (e) => {
     const files = e.target.files;
+    console.log('Main Image Files:', files); // Log the main image file
     if (files.length > 0) {
       setFormData({ ...formData, mainImage: files[0] });
     }
@@ -228,6 +251,8 @@ const handleUpload = async () => {
   // Function to handle additional images upload, limited to 3 images
   const handleAdditionalImagesChange = (e) => {
     const files = Array.from(e.target.files);
+    console.log('Additional Images Files:', files); // Log selected files
+    
     if (files.length + formData.additionalImages.length <= 3) {
       setFormData({
         ...formData,
@@ -237,7 +262,6 @@ const handleUpload = async () => {
       alert("You can only upload up to 3 additional images.");
     }
   };
-
   const handleCategoryChange = (e) => {
     const { value } = e.target;
     setFormData((prevData) => {

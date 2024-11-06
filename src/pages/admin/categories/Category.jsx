@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { databases } from '@/appwrite'; // Ensure the path is correct
+import {  ID } from 'appwrite'; // Ensure the path is correct
+import { databases } from '@/appwrite';
 
 function Categories() {
   const [categories, setCategories] = useState([]);
@@ -10,12 +11,13 @@ function Categories() {
   const fetchCategories = async () => {
     try {
       const response = await databases.listDocuments(
-        '67269e330009154de759', // Database ID
-        '67287391003a9b859371'  // Collection ID
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID, // Database ID from environment variable
+        process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_CATEGORIES_ID  // Collection ID from environment variable
       );
       setCategories(response.documents); // Set the fetched categories
     } catch (error) {
       console.error('Error fetching categories:', error);
+      setError('Failed to fetch categories. Please try again later.');
     }
   };
 
@@ -39,15 +41,16 @@ function Categories() {
 
       try {
         const newCategory = await databases.createDocument(
-          '67269e330009154de759', // Database ID
-          '67287391003a9b859371', // Collection ID
-          'unique()', // Unique ID for the document
+          process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID, // Database ID from environment variable
+          process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_CATEGORIES_ID, // Collection ID from environment variable
+          ID.unique(),  // Use ID.unique() to generate a unique ID for the document
           { category: categoryName } // Ensure this matches the schema
         );
         setCategories((prevCategories) => [...prevCategories, newCategory]); // Update state with the new category
         setCategoryName(''); // Clear the input
       } catch (err) {
         console.error('Error adding category:', err);
+        setError('Failed to add category. Please try again later.');
       }
     }
   };
@@ -55,10 +58,15 @@ function Categories() {
   const handleDeleteCategory = async (index) => {
     const categoryId = categories[index].$id;
     try {
-      await databases.deleteDocument('67269e330009154de759', '67287391003a9b859371', categoryId);
+      await databases.deleteDocument(
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID, // Database ID from environment variable
+        process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_CATEGORIES_ID, // Collection ID from environment variable
+        categoryId
+      );
       setCategories((prevCategories) => prevCategories.filter((_, i) => i !== index)); // Remove the deleted category from state
     } catch (err) {
       console.error('Error deleting category:', err);
+      setError('Failed to delete category. Please try again later.');
     }
   };
 
@@ -80,8 +88,8 @@ function Categories() {
       const categoryId = categories[index].$id;
       try {
         const updatedCategory = await databases.updateDocument(
-          '67269e330009154de759',
-          '67287391003a9b859371',
+          process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID, // Database ID from environment variable
+          process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_CATEGORIES_ID, // Collection ID from environment variable
           categoryId,
           { category: newCategoryName } // Ensure this matches the schema
         );
@@ -90,6 +98,7 @@ function Categories() {
         );
       } catch (err) {
         console.error('Error updating category:', err);
+        setError('Failed to update category. Please try again later.');
       }
     }
   };

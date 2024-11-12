@@ -1,17 +1,68 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 function Video() {
-  const videoRef = useRef(null); // Reference to the video element
-  const [isPlaying, setIsPlaying] = useState(false); // State to track if the video is playing
+  const videoRef = useRef(null); // Reference to the video container
+  const [isPlaying, setIsPlaying] = useState(false); // Track if video is playing
+  const [player, setPlayer] = useState(null); // Hold YouTube player instance
 
-  const handlePlayPause = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause(); // Pause the video
-      } else {
-        videoRef.current.play(); // Play the video
+  useEffect(() => {
+    // Load the YouTube API if not already loaded
+    if (window.YT && window.YT.Player) {
+      initializePlayer();
+    } else {
+      const script = document.createElement('script');
+      script.src = 'https://www.youtube.com/iframe_api';
+      script.onload = () => {
+        window.onYouTubeIframeAPIReady = initializePlayer;
+      };
+      document.body.appendChild(script);
+    }
+
+    return () => {
+      // Clean up player on component unmount
+      if (player) {
+        player.destroy();
       }
-      setIsPlaying(!isPlaying); // Toggle play state
+    };
+  }, []);
+
+  // Initialize the YouTube player once the API is loaded
+  const initializePlayer = () => {
+    if (window.YT && window.YT.Player && !player) {
+      const ytPlayer = new window.YT.Player(videoRef.current, {
+        videoId: '-ECqbfX0IUA', // Use your YouTube video ID here
+        events: {
+          onReady: onPlayerReady,
+          onStateChange: onPlayerStateChange,
+        },
+      });
+      setPlayer(ytPlayer); // Save player instance
+    }
+  };
+
+  // Triggered when the player is ready
+  const onPlayerReady = (event) => {
+    console.log('Player is ready');
+    event.target.mute();
+  };
+
+  // Handle video state changes
+  const onPlayerStateChange = (event) => {
+    if (event.data === window.YT.PlayerState.PLAYING) {
+      setIsPlaying(true);
+    } else if (event.data === window.YT.PlayerState.PAUSED) {
+      setIsPlaying(false);
+    }
+  };
+
+  // Toggle play/pause for the video
+  const handlePlayPause = () => {
+    if (player) {
+      if (isPlaying) {
+        player.pauseVideo(); // Pause if currently playing
+      } else {
+        player.playVideo(); // Play if currently paused
+      }
     }
   };
 
@@ -19,28 +70,31 @@ function Video() {
     <div className="relative flex flex-col items-center py-10">
       <h2 className="text-xl font-semibold mb-5">How We Made This Video</h2>
       <div className="relative w-full">
-        <video
+        {/* YouTube Embedded Video Container */}
+        <div
           ref={videoRef}
-          className="w-screen h-auto"
-          src="video.mp4" // Replace with your video URL
-          onClick={handlePlayPause} // Allow clicking on video to play/pause
-        />
+          className="w-full h-[calc(100vh-150px)] md:h-auto aspect-video"
+        ></div>
+
         {/* Play Button Overlay */}
-        <button
-          onClick={handlePlayPause}
-          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-3xl"
-          style={{ display: isPlaying ? 'none' : 'flex' }} // Hide when playing
-        >
-           <i className="ri-play-large-line   text-black text-4xl"></i>
-        </button>
+        {!isPlaying && (
+          <button
+            onClick={handlePlayPause}
+            className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-3xl"
+          >
+            <i className="ri-play-large-line text-white text-4xl"></i>
+          </button>
+        )}
+
         {/* Pause Button Overlay */}
-        <button
-          onClick={handlePlayPause}
-          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 text-white text-3xl"
-          style={{ display: isPlaying ? 'flex' : 'none' }} // Hide when paused
-        >
-          <i className="ri-pause-large-line text-black text-4xl"></i>
-        </button>
+        {isPlaying && (
+          <button
+            onClick={handlePlayPause}
+            className="absolute inset-0 flex items-center justify-center  text-white text-3xl"
+          >
+            <i className="ri-pause-large-line text-white text-4xl"></i>
+          </button>
+        )}
       </div>
     </div>
   );

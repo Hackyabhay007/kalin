@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['s3-alpha-sig.figma.com', 'cloud.appwrite.io'], // Add Appwrite domain here
+    domains: ['s3-alpha-sig.figma.com', 'cloud.appwrite.io','encrypted-tbn0.gstatic.com'], // Add Appwrite domain here
   },
 };
 

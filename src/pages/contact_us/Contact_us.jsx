@@ -4,7 +4,7 @@ function Contact_us() {
   return (
     <div className="w-screen h-auto bg-white text-black ">
       {/* Image Section */}
-      <div className="w-screen h-64 md:h-96 bg-bottom bg-cover mb-10" style={{ backgroundImage: "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTpXU_PZpD54VjtWpse53oEpmSVEcQ2LevpzQ&s')" }}>
+      <div className="w-screen h-64 md:h-screen bg-bottom bg-cover mb-10" style={{ backgroundImage: "url('https://s3-alpha-sig.figma.com/img/3414/500a/7d661be88a8dd3ae59979384ce3d93de?Expires=1732492800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=IEc25Uk5oeJUsOLiSxsuX2teTUIrfS9K234eCcjeOAEO8r322wR8xr1zNyzJZVeqTk1mMWiEJBLOEEfZicMKYj6-5LlhLrW4aF-397vC37VVR5riB5cjirG~OtabwXHpSfdtBZJyS5sXI917YMhaHhP5E6efqAUgfTgbHXkPve-9-KqpBw3w0rEKN5nVn4f2ztKNu-JGbkfnIGOib6LMdyDlqMOmAB5~n7e0jRqI2LHVs7ECEWxJoWjOOELnyW5oQsT4fcn5MJabTV1y0VOO4sv9qemGN0mfklBSwUNGK~x4YU7hBwDqqa7Eif9GTcY8dQteBV78YEmJXQYI8csvAw__')" }}>
         {/* Replace the URL with your actual image URL */}
       </div>
 

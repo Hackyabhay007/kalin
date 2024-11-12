@@ -9,7 +9,7 @@ const Filter = ({ onApply }) => {
   const [sizes, setSizes] = useState([]);
   const [categories, setCategories] = useState([]);
   const [colors, setColors] = useState([]);
-
+  const [sortOrder, setSortOrder] = useState(null);
   // Initialize Appwrite client
   const client = new Client();
   client
@@ -55,20 +55,40 @@ const Filter = ({ onApply }) => {
         : [...prevSelected, item]
     );
   };
+  // "asc" for Low to High, "desc" for High to Low
 
-  const handleApply = () => {
-    onApply({
-      sizes: selectedSizes,
-      categories: selectedCategories,
-      colors: selectedColors,
-    });
-  };
+const handleSort = (order) => {
+  setSortOrder(order);
+  onApply({
+    sizes: selectedSizes,
+    categories: selectedCategories,
+    colors: selectedColors,
+    sortOrder: order,
+  });
+};
+
+const handleApply = () => {
+  // Convert the selected sizes to "width x height" string format
+  const normalizedSizes = selectedSizes.map(size => {
+    const [width, height] = size.split(' x ').map(Number);
+    return `${width}x${height}`; // Convert back to "width x height" format as a string
+  });
+
+  onApply({
+    sizes: normalizedSizes, // Pass sizes as strings in the format "width x height"
+    categories: selectedCategories,
+    colors: selectedColors,
+  });
+};
+
 
   const handleReset = () => {
     setSelectedSizes([]);
     setSelectedCategories([]);
     setSelectedColors([]);
+    onApply({ sizes: [], categories: [], colors: [] }); // Apply empty filters
   };
+  
 
   return (
     <div
@@ -100,10 +120,10 @@ const Filter = ({ onApply }) => {
       <div className="mb-4">
         <h3 className="text-base font-semibold mb-2">Price</h3>
         <div className="flex flex-col gap-2">
-          <button className="border border-black rounded-none py-1 px-2 hover:bg-black hover:text-white">
+          <button onClick={() => handleSort('asc')} className="border border-black rounded-none py-1 px-2 hover:bg-black hover:text-white">
             Low to High
           </button>
-          <button className="border border-black rounded-none py-1 px-2 hover:bg-black hover:text-white">
+          <button onClick={() => handleSort('desc')}   className="border border-black rounded-none py-1 px-2 hover:bg-black hover:text-white">
             High to Low
           </button>
         </div>

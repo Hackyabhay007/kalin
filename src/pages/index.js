@@ -9,6 +9,7 @@ import Story from "./Story/Story";
 import Customize from "./CustomizeHome/Customize";
 import Video from "./Video/Video";
 import Blog from "./Blog/Blog";
+// import Loader from "./loader/Loader";
 export default function Home() {
   return (
     <>

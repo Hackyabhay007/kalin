@@ -13,6 +13,11 @@ function Sidebar() {
             </Link>
           </li>
           <li>
+            <Link href="/admin/hero">
+              <p className="block py-2 px-4 hover:bg-gray-700 rounded">hero</p>
+            </Link>
+          </li>
+          <li>
             <Link href="/admin/products">
               <p className="block py-2 px-4 hover:bg-gray-700 rounded">Products</p>
             </Link>
@@ -35,6 +40,11 @@ function Sidebar() {
           <li>
             <Link href="/admin/size">
               <p className="block py-2 px-4 hover:bg-gray-700 rounded">Sizes</p>
+            </Link>
+          </li>
+          <li>
+            <Link href="/admin/blog">
+              <p className="block py-2 px-4 hover:bg-gray-700 rounded">Blog</p>
             </Link>
           </li>
         </ul>

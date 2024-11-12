@@ -1,31 +1,55 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Client, Databases } from 'appwrite';
 
-// Dummy data for blogs
-const blogData = Array(15).fill({
-  imageSrc: "https://s3-alpha-sig.figma.com/img/089d/d7f9/708ba25dce40827d6768cb27c3af603a?Expires=1731888000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=pfD2Pwg-XwAoofynw9thskTNLYbJufpn4yqX~bAzFzyZMvxfnLEb3BUEn5zlZrTFcbaCMeNX27v9ermEH~5ldrG4OPm5wbHCCJhQyrDyriGPSjPmy18sPcTQslMJ8QNVx6vvAj~ZY42Ei0lmtMCpsCMt-ORxICi3vILZbh2cI-5wgCjyta8Bm~E1lKjmWbN7iEo6Tgsfop-BR11fGfDDhQJsFJTT8QHUy~GYY1LW5V0hCRgbzTpXdEpF-tCCd9V0pNdHGcizDtNSO13d-ISIzQrMtLk6Gn0FHF9g~PgL7g0oSw18U8nMRQlyjBA3CcxMAG-yu~eHvBXA-xM3LlcHRA__",
-  title: "Our Blog",
-  description: "This is a brief description of the blog post. It provides insight into the content in 15-25 words.",
-});
+// Appwrite client setup
+const client = new Client();
+client
+  .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT)
+  .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID);
+
+const databases = new Databases(client);
 
 function Blog_Cart() {
+  const [blogData, setBlogData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const blogsPerPage = 9;
-  const totalPages = Math.ceil(blogData.length / blogsPerPage);
+  
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
 
-  // Get blogs for the current page
+  const fetchBlogs = async () => {
+    try {
+      const response = await databases.listDocuments(
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID,
+        process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_BLOG_ID
+      );
+      setBlogData(response.documents);
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
+    }
+  };
+
+  // Paginate blogs
+  const totalPages = Math.ceil(blogData.length / blogsPerPage);
   const currentBlogs = blogData.slice(
     (currentPage - 1) * blogsPerPage,
     currentPage * blogsPerPage
   );
 
+  const truncateDescription = (contentArray) => {
+    if (!contentArray || contentArray.length === 0) return "";
+    return contentArray[0].split(' ').slice(0, 30).join(' ') + '...';
+  };
+
   return (
     <div className="bg-white text-black min-h-screen py-10">
-      <h1 className="text-center text-2xl font-bold mb-10">Our Blog </h1>
+      <h1 className="text-center text-2xl font-bold mb-10">Our Blog</h1>
 
       {/* Horizontal Image */}
-      <div className="w-full flex justify-center md:h-96 mb-20  md:px-24 ">
+      <div className="w-full flex justify-center md:h-96 mb-20 md:px-24">
         <Image
           src="https://s3-alpha-sig.figma.com/img/089d/d7f9/708ba25dce40827d6768cb27c3af603a?Expires=1731888000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=pfD2Pwg-XwAoofynw9thskTNLYbJufpn4yqX~bAzFzyZMvxfnLEb3BUEn5zlZrTFcbaCMeNX27v9ermEH~5ldrG4OPm5wbHCCJhQyrDyriGPSjPmy18sPcTQslMJ8QNVx6vvAj~ZY42Ei0lmtMCpsCMt-ORxICi3vILZbh2cI-5wgCjyta8Bm~E1lKjmWbN7iEo6Tgsfop-BR11fGfDDhQJsFJTT8QHUy~GYY1LW5V0hCRgbzTpXdEpF-tCCd9V0pNdHGcizDtNSO13d-ISIzQrMtLk6Gn0FHF9g~PgL7g0oSw18U8nMRQlyjBA3CcxMAG-yu~eHvBXA-xM3LlcHRA__"
           alt="Our Blog Banner"
@@ -37,26 +61,26 @@ function Blog_Cart() {
 
       {/* Blog Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-20 px-5 md:px-20">
-        {currentBlogs.map((blog, index) => (
-          <div key={index} className="no-border bg-transparent p-4">
-            <Image
-              src={blog.imageSrc}
-              alt={blog.title}
-              width={500}
-              height={300}
-              layout="responsive"
-              className="object-cover"
-            />
-            <h2 className="text-lg font-semibold mt-4">{blog.title}</h2>
-            <p className="text-sm mt-2">{blog.description}</p>
-            <Link
-              href={`/Blog/${index + 1}`} // Placeholder for individual blog post link
-              className="text-sm underline mt-2 block"
-            >
-              Read more
-            </Link>
-          </div>
-        ))}
+        {currentBlogs.map((blog) => {
+          const imageUrl = `https://cloud.appwrite.io/v1/storage/buckets/${process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID}/files/${blog.image}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`;
+          return (
+            <div key={blog.$id} className="no-border bg-transparent p-4">
+              <Image
+                src={imageUrl}
+                alt={blog.title}
+                width={500}
+                height={300}
+                layout="responsive"
+                className="object-cover"
+              />
+              
+              <p className="text-sm mt-2">{truncateDescription(blog.content)}</p>
+              <Link href={`/Blog/${blog.$id}`} className="text-sm underline mt-2 block">
+                Read more
+              </Link>
+            </div>
+          );
+        })}
       </div>
 
       {/* Pagination Controls */}

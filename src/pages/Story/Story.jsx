@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';  // Import Image component
 import React from 'react';
 
 function Story() {
@@ -6,19 +7,23 @@ function Story() {
     <div className="flex flex-col md:flex-row md:mx-32 py-10">
       {/* Left Image for Desktop */}
       <div className="hidden md:w-1/6 md:block">
-        <img 
-          src="https://s3-alpha-sig.figma.com/img/f06c/8d02/1e48bafc4010b3ae7e7159bee626fa5d?Expires=1730678400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=bg5PtBehxVa21EW48REEDgYOav6LRgYnuMAUqzaRxQDlS~d~zKXj6S9wAO3~TeOF3cNOMrvjJ-kB3CxE264dxiacq0ngjucGHTNNypmmfAEQ5QZ1jNQoV5rrY1vQBGL99f9dAsignX1xv~SLLCTJp7r3vHDiR~qJf3ab8BBULKFfpxf9~uRQYSJR7CtNVm-FReiRfQiU4CTIm-FFpsiqDv1vUB5dvyNT2pBHFFRhmsRMSamZkfepjTLeJZDV4BmXUiG45YrfZwXo6-7K9~o76KnrnZrXzXUipfeBh~JcHJdgRQCIvevPej-8q7-s9uU5TtiacvuJVQfQDw3bAiODgg__" 
+        <Image 
+         src='/local/images/story_girl.jpeg'
           alt="Story"
           className="w-full h-full object-cover"
+          width={400}  // Correct width
+          height={400}  // Correct height
         />
       </div>
 
       {/* Full-width Image for Mobile */}
       <div className="md:hidden w-screen text-center h-auto relative">
-        <img 
-          src="https://s3-alpha-sig.figma.com/img/f06c/8d02/1e48bafc4010b3ae7e7159bee626fa5d?Expires=1730678400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=bg5PtBehxVa21EW48REEDgYOav6LRgYnuMAUqzaRxQDlS~d~zKXj6S9wAO3~TeOF3cNOMrvjJ-kB3CxE264dxiacq0ngjucGHTNNypmmfAEQ5QZ1jNQoV5rrY1vQBGL99f9dAsignX1xv~SLLCTJp7r3vHDiR~qJf3ab8BBULKFfpxf9~uRQYSJR7CtNVm-FReiRfQiU4CTIm-FFpsiqDv1vUB5dvyNT2pBHFFRhmsRMSamZkfepjTLeJZDV4BmXUiG45YrfZwXo6-7K9~o76KnrnZrXzXUipfeBh~JcHJdgRQCIvevPej-8q7-s9uU5TtiacvuJVQfQDw3bAiODgg__" 
+        <Image 
+         src="/local/images/story_girl.jpeg"
           alt="Story"
           className="w-full h-full object-cover"
+          width={400}  // Correct width
+          height={400}  // Correct height
         />
         {/* Overlay Text for Mobile */}
         <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-40 p-2">

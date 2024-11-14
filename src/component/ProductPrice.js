@@ -1,15 +1,15 @@
-// src/components/ProductPrice.js
 import React from 'react';
 import { useSelector } from 'react-redux';
 
 const ProductPrice = ({ priceInINR }) => {
   const { conversionRate, selectedCurrency } = useSelector((state) => state.currency);
 
-  const convertedPrice = (priceInINR * conversionRate).toFixed(2);
+  // Convert the price to the selected currency
+  const convertedPrice = selectedCurrency === 'INR' ? priceInINR : (priceInINR * conversionRate).toFixed(2);
 
   return (
     <p>
-      Price: {selectedCurrency} {convertedPrice}
+      Price: {selectedCurrency === 'INR' ? '₹' : '$'} {convertedPrice}
     </p>
   );
 };

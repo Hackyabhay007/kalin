@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext"; // Import useCart from CartContext
 import { useSelector } from "react-redux"; // Import useSelector for currency data
 import { useRouter } from "next/router";
+import Loader from "../loader/Loader";
 function CustomizePage({
   title = "Shop",
   description = "",
@@ -12,7 +13,7 @@ function CustomizePage({
 }) {
   const { addToCart } = useCart(); // Destructure addToCart from useCart
   
-  const { conversionRate, selectedCurrency } = useSelector(
+  const { conversionRate = 1, selectedCurrency } = useSelector(
     (state) => state.currency
   ); // Access currency and conversion rate from Redux
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -23,6 +24,7 @@ function CustomizePage({
     colors: [],
     sortOrder: "asc", // Default sort order
   });
+  const [isLoading, setIsLoading] = useState(true);
   const itemsPerPage = 8;
 
   const toggleMobileFilter = () => setIsMobileFilterOpen(!isMobileFilterOpen);
@@ -44,6 +46,11 @@ function CustomizePage({
 
   // Fetch data based on query parameters
   useEffect(() => {
+    setIsLoading(true); // Start loading
+    setTimeout(() => {
+      setIsLoading(false); // Simulate loading finished
+    }, 1000); // Set delay to simulate loading, remove in production
+
     const { category, size, color, sortOrder } = router.query;
     setFilters({
       categories: category ? category.split(",") : [],
@@ -52,7 +59,6 @@ function CustomizePage({
       sortOrder: sortOrder || "asc",
     });
   }, [router.query]);
-
   const filteredProducts = products
     .filter((product) => {
       const matchesSize =
@@ -145,35 +151,41 @@ function CustomizePage({
         <p className="text-center text-gray-700 mb-6">{description}</p>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {currentProducts.map((product) => (
-            <div key={product.id} className="flex flex-col items-center">
-              <Link href={`/shop/product_view/${product.id}`}>
-                <Image
-                  src={product.imgSrc}
-                  alt={product.name}
-                  width={500}
-                  height={500}
-                  className="h-56 object-contain"
-                />
-              </Link>
-              <p className="mt-2 text-center">{product.name}</p>
-
-              {/* Display converted price based on selected currency */}
-              <p className="text-gray-600">
-                {selectedCurrency === "INR" ? "₹" : "$"}{" "}
-                {(product.price * conversionRate).toFixed(2)}
-              </p>
-
-              <button
-                onClick={() => addToCart(product)}
-                className="mt-2"
-                aria-label="Add to cart"
-              >
-                <i className="ri-add-circle-line text-xl hover:bg-black hover:text-white hover:rounded-full transition-all duration-1000 delay-200"></i>
-
-              </button>
+        {isLoading ? (
+          <>
+          <div className="flex justify-center items-center h-96 ml-[450px]  w-fit">
+            <Loader />
             </div>
-          ))}
+            </> 
+          ) : (
+            currentProducts.map((product) => (
+              <div key={product.id} className="flex flex-col items-center">
+                <Link href={`/shop/product_view/${product.id}`}>
+                  <Image
+                    src={product.imgSrc}
+                    alt={product.name}
+                    width={500}
+                    height={500}
+                    className="h-56 object-contain"
+                  />
+                </Link>
+                <p className="mt-2 text-center">{product.name}</p>
+
+                <p className="text-gray-600">
+                  {selectedCurrency === "INR" ? "₹" : "$"}{" "}
+                  {(product.price * conversionRate).toFixed(2)}
+                </p>
+
+                <button
+                  onClick={() => addToCart(product)}
+                  className="mt-2"
+                  aria-label="Add to cart"
+                >
+                  <i className="ri-add-circle-line text-xl hover:bg-black hover:text-white hover:rounded-full transition-all duration-1000 delay-200"></i>
+                </button>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Pagination Controls */}
@@ -196,8 +208,8 @@ function CustomizePage({
                 onClick={() => handlePageChange(pageNumber)}
                 className={`px-3 py-1 ${
                   currentPage === pageNumber
-                    ? "bg-blue-500 text-white border border-black"
-                    : "bg-gray-100 border border-black text-black"
+                    ? "bg-black text-white border border-black"
+                    : " border border-black text-black"
                 }`}
                 aria-label={`Page ${pageNumber}`}
               >

@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
 import Loader from '@/pages/loader/Loader';
+import { useSelector } from "react-redux"; // Import useSelector for currency data
 
 const ProductPage = () => {
   const router = useRouter();
@@ -21,7 +22,9 @@ const ProductPage = () => {
 
   const { addToCart } = useCart(); // Access the addToCart function from CartContext
 
-  
+  const { conversionRate = 1, selectedCurrency } = useSelector(
+    (state) => state.currency
+  ); 
   useEffect(() => {
     if (productId) {
       const fetchProductData = async () => {
@@ -167,7 +170,8 @@ const ProductPage = () => {
         <div className="md:w-2/5 space-y-8">
           <h2 className="text-3xl font-semibold">{product.name}</h2>
           <hr className="border-gray-400" />
-          <p className="text-2xl font-semibold text-gray-800">MRP: {product.price}</p>
+          <p className="text-2xl font-semibold text-gray-800">{selectedCurrency === "INR" ? "₹" : "$"}{" "}
+          {(product.price * conversionRate).toFixed(2)}</p>
           <hr className="border-gray-400" />
 
           {/* Size Options */}

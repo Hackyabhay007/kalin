@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useSelector } from "react-redux"; 
 function Checkout() {
   const router = useRouter();
-  const { conversionRate, selectedCurrency } = useSelector(
+  const { conversionRate=1, selectedCurrency= "USD" } = useSelector(
     (state) => state.currency
   ); 
   const { name, price, quantity, size, color } = router.query;

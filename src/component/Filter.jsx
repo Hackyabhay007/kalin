@@ -140,7 +140,7 @@ const handleApply = () => {
               <label key={size.$id} className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  className="border h-6 w-6 border-black"
+                  className="border h-6 w-6 rounded-sm accent-black"
                   checked={selectedSizes.includes(sizeLabel)}
                   onChange={() =>
                     handleToggleSelection(sizeLabel, selectedSizes, setSelectedSizes)
@@ -162,7 +162,7 @@ const handleApply = () => {
             <label key={category.$id} className="flex items-center gap-2">
               <input
                 type="checkbox"
-                className="border h-6 w-6 border-black"
+                className="border h-6 w-6 rounded-sm accent-black "
                 checked={selectedCategories.includes(category.category)}
                 onChange={() =>
                   handleToggleSelection(category.category, selectedCategories, setSelectedCategories)
@@ -182,7 +182,7 @@ const handleApply = () => {
             <label key={color.$id} className="flex items-center gap-2">
               <input
                 type="checkbox"
-                className="w-6 h-6 border border-black"
+                className="w-6 h-6 border border-black accent-black"
                 checked={selectedColors.includes(color.name)}
                 onChange={() =>
                   handleToggleSelection(color.name, selectedColors, setSelectedColors)

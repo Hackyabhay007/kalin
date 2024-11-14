@@ -1,15 +1,33 @@
 // src/pages/_app.js
-import { Provider } from 'react-redux';
-import { store } from '@/redux/store'; // Adjust the path if needed
-import { CartProvider } from '@/context/CartContext'; // Import your CartContext provider
-import '../styles/globals.css'; // Ensure this path is correct
+import { useEffect } from 'react';
+import { Provider, useDispatch } from 'react-redux';
+import { store } from '@/redux/store';
+import { fetchOrUpdateConversionRate } from '@/utils/currencyUtils';
+import { CartProvider } from '@/context/CartContext';
+import '../styles/globals.css';
 
-export default function App({ Component, pageProps }) {
+function MyApp({ Component, pageProps }) {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Fetch or update currency conversion rate when the app loads
+    fetchOrUpdateConversionRate(dispatch);
+  }, [dispatch]);
+
   return (
     <Provider store={store}>
-      <CartProvider> {/* Wrap the CartProvider around the component */}
+      <CartProvider>
         <Component {...pageProps} />
       </CartProvider>
+    </Provider>
+  );
+}
+
+// Wrap MyApp in the Provider to have access to dispatch
+export default function AppWrapper(props) {
+  return (
+    <Provider store={store}>
+      <MyApp {...props} />
     </Provider>
   );
 }

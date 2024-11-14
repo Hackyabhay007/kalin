@@ -1,36 +1,83 @@
-// src/components/Nav.jsx
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCurrency } from "@/redux/slices/currencySlice";
-import { fetchConversionRate } from "@/utils/currencyUtils";
+import { fetchOrUpdateConversionRate } from "@/utils/currencyUtils";
 import { useCart } from "@/context/CartContext";
+import { useRouter } from "next/router";
+import { debounce } from "lodash";
+
 function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
   const isLoggedIn = Boolean(userEmail);
-  const { cartItems } = useCart(); // Access cart items from context
-  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0); 
+  const { cartItems } = useCart();
+  const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const storedEmail = localStorage.getItem('user');
+    const storedEmail = localStorage.getItem("user");
     if (storedEmail) {
       setUserEmail(storedEmail);
     }
   }, []);
-  const selectedCurrency = useSelector(
-    (state) => state.currency.selectedCurrency
-  );
 
-  const handleCurrencyChange = (e) => {
+  const selectedCurrency = useSelector((state) => state.currency.selectedCurrency);
+
+  const handleCurrencyChange = async (e) => {
     const newCurrency = e.target.value;
     dispatch(setSelectedCurrency(newCurrency));
-    fetchConversionRate(dispatch, "INR", newCurrency); // assuming INR as base
+    await fetchOrUpdateConversionRate(dispatch, "INR", newCurrency); // assuming INR as base
   };
+
+  const fetchSuggestions = debounce(async (query) => {
+    if (query.trim()) {
+      try {
+        const res = await fetch(`/api/search?query=${encodeURIComponent(query)}`);
+        if (!res.ok) throw new Error("Failed to fetch suggestions");
+  
+        const data = await res.json();
+        setSuggestions(data); // Set suggestions from API response
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  }, 300);
+  
+
+  const handleSearchInputChange = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    fetchSuggestions(query); // Fetch suggestions with debounce
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setSearchQuery("");
+    setSuggestions([]);
+    router.push({
+      pathname: "/shop",
+      query: { category: suggestion },
+    });
+  };
+
+  const handleSearchEnter = (e) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      router.push({
+        pathname: "/shop",
+        query: { category: searchQuery }, // Redirect to the shop page with search query
+      });
+      setSuggestions([]); // Clear suggestions after search
+    }
+  };
+
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
   };
@@ -38,7 +85,6 @@ function Nav() {
   const toggleSearch = () => {
     setSearchVisible((prev) => !prev);
   };
-
   return (
     <nav className="bg-white shadow-lg flex  justify-between gap-10 text-sm text-black items-center py-1">
       {/* Left Side - Logo and Mobile Menu */}
@@ -71,7 +117,7 @@ function Nav() {
 
         {/* Logo */}
         <Image
-          src="https://s3-alpha-sig.figma.com/img/c9a3/651f/090c30b7dec85d63787dbeeb98e5322d?Expires=1730678400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=gLWPMgr9kInHLYkRA37zJB7-yKtjoVH-JywCOxCMgeWKjif6w2Xh8Y5jdg6~z6DpdDNl6~aASIAv1KCNmO90ivTin4bIUapsfQedp2LEElFVNt~B1nMpDfk8QiiRPwlNIb8DYDR07idFREd4z3qS9GLxT4e4gd05FwKizZG3PcKv0iiQw~Q0VnGC9jKp2cYDrjPd7WWCGc9VpIrJaPGuD79cU73yFBf7sTs-1QsJi8OcCkhzKBApKBY1raBVuhkooUfsAW24OuR1JVez9oMTy-kxeO2~RKpAmBnKVuqsjDEP51GrjSgmR9ko4~5pS19JyJplYVadc9KjWs0mKDrQjg__"
+          src="/local/images/logo.png"
           alt=""
           className="w-16 mx-20"
           width={200}
@@ -100,13 +146,30 @@ function Nav() {
 
       {/* Search Input & Currency Dropdown (Desktop) */}
       <div className="hidden md:flex gap-5">
-        <div className="relative">
+      <div className="relative">
           <input
             type="text"
             placeholder="Search..."
+            value={searchQuery}
+            onChange={handleSearchInputChange}
+            onKeyDown={handleSearchEnter} // Detect Enter key
             className="border border-gray-300 rounded-full ring-1 ring-black py-1 px-3 pl-10 focus:outline-none"
           />
           <i className="ri-search-line absolute left-3 top-1/2 transform -translate-y-1/2"></i>
+
+          {searchQuery && suggestions.length > 0 && (
+            <ul className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded shadow-lg z-10">
+              {suggestions.map((suggestion, index) => (
+                <li
+                  key={index}
+                  className="p-2 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         <select
@@ -121,9 +184,7 @@ function Nav() {
 
         {/* Right Side - Icons */}
 
-        <button className="text-black hover:text-gray-800">
-          <i className="ri-heart-line text-2xl"></i>
-        </button>
+        
         <Link href="/cart">
           <button className="text-black hover:text-gray-800">
             <i className="ri-shopping-bag-line text-2xl"></i>
@@ -191,17 +252,32 @@ function Nav() {
           <input
             type="text"
             placeholder="Search..."
+            value={searchQuery}
+            onChange={handleSearchInputChange}
+            onKeyDown={handleSearchEnter}
             className="border border-gray-300 w-screen rounded-full ring-1 ring-black py-1 px-3 pl-10 focus:outline-none"
           />
           <i className="ri-search-line absolute left-6 top-1/2   transform -translate-y-1/2"></i>
+          
+          {searchQuery && suggestions.length > 0 && (
+            <ul className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded shadow-lg z-10">
+              {suggestions.map((suggestion, index) => (
+                <li
+                  key={index}
+                  className="p-2 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 
       {/* Right Side - Icons for Mobile */}
       <div className="md:hidden flex items-center  gap-3 mr-4">
-        <button className="text-black hover:text-gray-800">
-          <i className="ri-heart-line text-2xl"></i>
-        </button>
+       
         <Link href="/cart">
           <button className="text-black hover:text-gray-800">
             <i className="ri-shopping-bag-line text-2xl"></i>

@@ -114,7 +114,7 @@ function Footer() {
             <Link href="/policies/terms-and-conditions">
               <li>Terms & Conditions</li>
             </Link>
-            <Link href="/customize/Shop">
+            <Link href="/shop">
               <li>Shop Carpets</li>
             </Link>
             <Link href="/policies/privacy-policy">
@@ -213,7 +213,7 @@ function Footer() {
             <Link href="/policies/terms-and-conditions">
               <li>Terms & Conditions</li>
             </Link>
-            <Link href="/customize/Shop">
+            <Link href="/shop">
               <li>Shop Carpets</li>
             </Link>
             <Link href="/policies/privacy-policy">

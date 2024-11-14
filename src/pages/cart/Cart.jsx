@@ -1,4 +1,3 @@
-// src/pages/cart/Cart.jsx
 import Link from "next/link";
 import React from "react";
 import { useCart } from "@/context/CartContext"; // Import useCart from CartContext
@@ -6,15 +5,15 @@ import Image from "next/image"; // Import Image from Next.js
 import { useRouter } from "next/router"; // Import useRouter from Next.js
 import { useSelector } from "react-redux"; 
 
-
 function Cart() {
   const { cartItems, removeFromCart } = useCart(); // Get cartItems and removeFromCart function from useCart
   const router = useRouter(); // Initialize router
- 
+
+  // Calculate the total price in the selected currency
   const calculateTotal = () => {
-    return cartItems.reduce((acc, item) => acc + item.price, 0);
+    return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0); // Adjust for quantity
   };
-  const { conversionRate, selectedCurrency } = useSelector(
+  const { conversionRate = 1, selectedCurrency = "USD" } = useSelector(
     (state) => state.currency
   ); 
   const total = calculateTotal();
@@ -40,10 +39,11 @@ function Cart() {
         <h2 className="text-2xl text-center font-bold mb-4">Your Cart</h2>
         {cartItems.length === 0 ? (
           <div className="text-center">
-            <p className="text-gray-500 text-lg mb-8">Your cart is empty</p>
-            <Link href="/customize/Shop">
+            <p className="text-gray-500 text-lg ">Your cart is empty</p>
+            <p className="my-5 text-6xl text-gray-500"><i class="ri-shopping-cart-line"></i></p>
+            <Link href="/shop">
               <button className="bg-gray-100 text-black px-4 py-2 rounded border hover:bg-black hover:border-black hover:text-white">
-                Back to Shopping
+              <i class="ri-shopping-bag-4-fill"></i> Back to Shopping
               </button>
             </Link>
           </div>
@@ -60,8 +60,11 @@ function Cart() {
                 />
                 <h3 className="text-sm mb-1">{item.name}</h3>
                 <p className="text-sm text-gray-700">{item.size}</p>
-                <p className="text-sm text-gray-700">{selectedCurrency === "INR" ? "₹" : "$"}{" "}
-                {(item.price * conversionRate).toFixed(2)}</p>
+                {/* Convert item price based on selected currency */}
+                <p className="text-sm text-gray-700">
+                  {selectedCurrency === "INR" ? "₹" : "$"}{" "}
+                  {(item.price * conversionRate).toFixed(2)}
+                </p>
                 
                 <button
                   onClick={() => handleBuyNow(item)}
@@ -89,14 +92,18 @@ function Cart() {
         <div className="mb-4">
           <div className="flex justify-between mb-2">
             <span className="text-start">Subtotal</span>
-            <span className="text-end">{selectedCurrency === "INR" ? "₹" : "$"}{" "}
-            {(total * conversionRate).toFixed(2)}</span>
+            <span className="text-end">
+              {selectedCurrency === "INR" ? "₹" : "$"}{" "}
+              {(total * conversionRate).toFixed(2)}
+            </span>
           </div>
           <hr className="border-gray-300" />
           <div className="flex justify-between font-semibold mt-2">
             <span>Total</span>
-            <span>{selectedCurrency === "INR" ? "₹" : "$"}{" "}
-            {(total * conversionRate).toFixed(2)}</span>
+            <span>
+              {selectedCurrency === "INR" ? "₹" : "$"}{" "}
+              {(total * conversionRate).toFixed(2)}
+            </span>
           </div>
         </div>
 
@@ -193,7 +200,7 @@ function Cart() {
           <button className="bg-black text-white px-4 py-4 w-full">
             Proceed to Order
           </button>
-          <Link href="/customize/Shop">
+          <Link href="/shop">
             <button className="bg-gray-100 text-black px-4 py-4 w-full border border-gray-300">
               Back to Shopping
             </button>

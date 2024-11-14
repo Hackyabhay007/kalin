@@ -12,7 +12,7 @@ function CustomizePage({
 }) {
   const { addToCart } = useCart(); // Destructure addToCart from useCart
   
-  const { conversionRate, selectedCurrency } = useSelector(
+  const { conversionRate = 1, selectedCurrency } = useSelector(
     (state) => state.currency
   ); // Access currency and conversion rate from Redux
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);

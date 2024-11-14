@@ -51,7 +51,7 @@ function Blog_Cart() {
       {/* Horizontal Image */}
       <div className="w-full flex justify-center md:h-96 mb-20 md:px-24">
         <Image
-          src="https://s3-alpha-sig.figma.com/img/089d/d7f9/708ba25dce40827d6768cb27c3af603a?Expires=1731888000&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=pfD2Pwg-XwAoofynw9thskTNLYbJufpn4yqX~bAzFzyZMvxfnLEb3BUEn5zlZrTFcbaCMeNX27v9ermEH~5ldrG4OPm5wbHCCJhQyrDyriGPSjPmy18sPcTQslMJ8QNVx6vvAj~ZY42Ei0lmtMCpsCMt-ORxICi3vILZbh2cI-5wgCjyta8Bm~E1lKjmWbN7iEo6Tgsfop-BR11fGfDDhQJsFJTT8QHUy~GYY1LW5V0hCRgbzTpXdEpF-tCCd9V0pNdHGcizDtNSO13d-ISIzQrMtLk6Gn0FHF9g~PgL7g0oSw18U8nMRQlyjBA3CcxMAG-yu~eHvBXA-xM3LlcHRA__"
+          src="/local/images/blog_home.jpeg"
           alt="Our Blog Banner"
           width={900}
           height={200}
@@ -87,17 +87,17 @@ function Blog_Cart() {
       <div className="flex justify-center items-center mt-10 space-x-2">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          className="px-4 py-2 hover:bg-black hover:text-white border border-black"
           disabled={currentPage === 1}
         >
           Previous
         </button>
-        <span className="text-lg font-medium">
+        <span className=" border font-semibold border-black py-2 px-2">
           Page {currentPage} of {totalPages}
         </span>
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+          className="px-4 py-2  hover:bg-black hover:text-white border border-black"
           disabled={currentPage === totalPages}
         >
           Next

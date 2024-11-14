@@ -6,26 +6,23 @@ function Customize() {
   // Array of images to be displayed
   const images = [
     {
-      src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBkvg6qEw9h3JegDFMgzT69s7I60tja0FVZnsiPLlObBtTJHdwBxsAnGlUfifWkXknVSU&usqp=CAU',
-
+       src:'/local/images/carpet_making.jpg',
       alt: 'Customization Option 1',
     },
     {
-      src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBkvg6qEw9h3JegDFMgzT69s7I60tja0FVZnsiPLlObBtTJHdwBxsAnGlUfifWkXknVSU&usqp=CAU',
-
+      src:'/local/images/carpet_making.jpg',
       alt: 'Customization Option 2',
     },
     {
-      src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBkvg6qEw9h3JegDFMgzT69s7I60tja0FVZnsiPLlObBtTJHdwBxsAnGlUfifWkXknVSU&usqp=CAU',
-
+      src:'/local/images/carpet_making.jpg',
       alt: 'Customization Option 3',
     },
     {
-     src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBkvg6qEw9h3JegDFMgzT69s7I60tja0FVZnsiPLlObBtTJHdwBxsAnGlUfifWkXknVSU&usqp=CAU',
+      src:'/local/images/carpet_making.jpg',
       alt: 'Customization Option 4',
     },
     {
-      src:'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBkvg6qEw9h3JegDFMgzT69s7I60tja0FVZnsiPLlObBtTJHdwBxsAnGlUfifWkXknVSU&usqp=CAU',
+      src:'/local/images/carpet_making.jpg',
       alt: 'Customization Option 5',
       }
   ];

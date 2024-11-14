@@ -1,5 +1,5 @@
 // src/utils/sendEmail.js
-const API_KEY = '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';
+const API_KEY = process.env.SENDINBLUE_API_KEY;
 
 export const sendEmail = async (emailData) => {
     try {

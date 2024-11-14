@@ -40,10 +40,10 @@ function Cart() {
         {cartItems.length === 0 ? (
           <div className="text-center">
             <p className="text-gray-500 text-lg ">Your cart is empty</p>
-            <p className="my-5 text-6xl text-gray-500"><i class="ri-shopping-cart-line"></i></p>
+            <p className="my-5 text-6xl text-gray-500"><i className="ri-shopping-cart-line"></i></p>
             <Link href="/shop">
               <button className="bg-gray-100 text-black px-4 py-2 rounded border hover:bg-black hover:border-black hover:text-white">
-              <i class="ri-shopping-bag-4-fill"></i> Back to Shopping
+                <i className="ri-shopping-bag-4-fill"></i> Back to Shopping
               </button>
             </Link>
           </div>
@@ -85,128 +85,130 @@ function Cart() {
       </div>
 
       {/* Right Side: Billing & Order Form */}
-      <div className="flex-1 p-6 h-fit text-sm text-black border border-black">
-        <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
+      {cartItems.length > 0 && (
+        <div className="flex-1 p-6 h-fit text-sm text-black border border-black">
+          <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
 
-        {/* Subtotal and Total */}
-        <div className="mb-4">
-          <div className="flex justify-between mb-2">
-            <span className="text-start">Subtotal</span>
-            <span className="text-end">
-              {selectedCurrency === "INR" ? "₹" : "$"}{" "}
-              {(total * conversionRate).toFixed(2)}
-            </span>
+          {/* Subtotal and Total */}
+          <div className="mb-4">
+            <div className="flex justify-between mb-2">
+              <span className="text-start">Subtotal</span>
+              <span className="text-end">
+                {selectedCurrency === "INR" ? "₹" : "$"}{" "}
+                {(total * conversionRate).toFixed(2)}
+              </span>
+            </div>
+            <hr className="border-gray-300" />
+            <div className="flex justify-between font-semibold mt-2">
+              <span>Total</span>
+              <span>
+                {selectedCurrency === "INR" ? "₹" : "$"}{" "}
+                {(total * conversionRate).toFixed(2)}
+              </span>
+            </div>
           </div>
-          <hr className="border-gray-300" />
-          <div className="flex justify-between font-semibold mt-2">
-            <span>Total</span>
-            <span>
-              {selectedCurrency === "INR" ? "₹" : "$"}{" "}
-              {(total * conversionRate).toFixed(2)}
-            </span>
-          </div>
-        </div>
 
-        {/* Delivery Information */}
-        <h3 className="my-2 font-semibold text-lg">Delivery</h3>
-        <select
-          className="w-full p-2 border border-gray-300 rounded-md mb-4 text-sm"
-          defaultValue=""
-        >
-          <option value="" disabled>
-            Country/Region
-          </option>
-          <option value="India">India</option>
-          <option value="USA">USA</option>
-          <option value="Canada">Canada</option>
-          <option value="UK">United Kingdom</option>
-          <option value="Australia">Australia</option>
-        </select>
-
-        {/* Name Fields */}
-        <div className="flex space-x-4 mb-4">
-          <input
-            type="text"
-            placeholder="First Name"
-            className="w-1/2 p-2 border border-gray-300 rounded-md"
-          />
-          <input
-            type="text"
-            placeholder="Last Name"
-            className="w-1/2 p-2 border border-gray-300 rounded-md"
-          />
-        </div>
-
-        {/* Address Fields */}
-        <input
-          type="text"
-          placeholder="Address"
-          className="w-full p-2 border border-gray-300 rounded-md mb-4"
-        />
-        <input
-          type="text"
-          placeholder="Landmark"
-          className="w-full p-2 border border-gray-300 rounded-md mb-4"
-        />
-
-        {/* State and Pin Code Fields */}
-        <div className="flex space-x-4 mb-4">
-          <input
-            type="text"
-            placeholder="City"
-            className="w-1/3 p-2 border border-gray-300 rounded-md"
-          />
-          <select className="w-1/3 p-2 border border-gray-300 rounded-md">
-            <option>State</option>
-            <option>Delhi</option>
-            <option>Maharashtra</option>
+          {/* Delivery Information */}
+          <h3 className="my-2 font-semibold text-lg">Delivery</h3>
+          <select
+            className="w-full p-2 border border-gray-300 rounded-md mb-4 text-sm"
+            defaultValue=""
+          >
+            <option value="" disabled>
+              Country/Region
+            </option>
+            <option value="India">India</option>
+            <option value="USA">USA</option>
+            <option value="Canada">Canada</option>
+            <option value="UK">United Kingdom</option>
+            <option value="Australia">Australia</option>
           </select>
+
+          {/* Name Fields */}
+          <div className="flex space-x-4 mb-4">
+            <input
+              type="text"
+              placeholder="First Name"
+              className="w-1/2 p-2 border border-gray-300 rounded-md"
+            />
+            <input
+              type="text"
+              placeholder="Last Name"
+              className="w-1/2 p-2 border border-gray-300 rounded-md"
+            />
+          </div>
+
+          {/* Address Fields */}
           <input
             type="text"
-            placeholder="Pin Code"
-            className="w-1/3 p-2 border border-gray-300 rounded-md"
+            placeholder="Address"
+            className="w-full p-2 border border-gray-300 rounded-md mb-4"
           />
-        </div>
+          <input
+            type="text"
+            placeholder="Landmark"
+            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+          />
 
-        {/* Phone Number */}
-        <input
-          type="text"
-          placeholder="Phone Number"
-          className="w-full p-2 border border-gray-300 rounded-md mb-4"
-        />
+          {/* State and Pin Code Fields */}
+          <div className="flex space-x-4 mb-4">
+            <input
+              type="text"
+              placeholder="City"
+              className="w-1/3 p-2 border border-gray-300 rounded-md"
+            />
+            <select className="w-1/3 p-2 border border-gray-300 rounded-md">
+              <option>State</option>
+              <option>Delhi</option>
+              <option>Maharashtra</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Pin Code"
+              className="w-1/3 p-2 border border-gray-300 rounded-md"
+            />
+          </div>
 
-        {/* Payment Options */}
-        <div className="mb-4">
-          <h3 className="font-semibold mb-2">Payment</h3>
-          <div className="flex flex-col space-y-2">
-            <label className="flex items-center">
-              <input type="radio" name="payment" className="mr-2" />
-              Online Payment
-            </label>
-            <label className="flex items-center">
-              <input type="radio" name="payment" className="mr-2" />
-              Cash on Delivery
-            </label>
+          {/* Phone Number */}
+          <input
+            type="text"
+            placeholder="Phone Number"
+            className="w-full p-2 border border-gray-300 rounded-md mb-4"
+          />
+
+          {/* Payment Options */}
+          <div className="mb-4">
+            <h3 className="font-semibold mb-2">Payment</h3>
+            <div className="flex flex-col space-y-2">
+              <label className="flex items-center">
+                <input type="radio" name="payment" className="mr-2" />
+                Online Payment
+              </label>
+              <label className="flex items-center">
+                <input type="radio" name="payment" className="mr-2" />
+                Cash on Delivery
+              </label>
+            </div>
+          </div>
+
+          {/* Free Shipping */}
+          <p className="text-gray-800 mb-4">
+            <i className="ri-truck-line text-xl"></i> Free Shipping
+          </p>
+
+          {/* Order Buttons */}
+          <div className="flex flex-col space-y-4">
+            <button className="bg-black text-white px-4 py-4 w-full">
+              Proceed to Order
+            </button>
+            <Link href="/shop">
+              <button className="bg-gray-100 text-black px-4 py-4 w-full border border-gray-300">
+                Back to Shopping
+              </button>
+            </Link>
           </div>
         </div>
-
-        {/* Free Shipping */}
-        <p className="text-gray-800 mb-4">
-          <i className="ri-truck-line text-xl"></i> Free Shipping
-        </p>
-
-        {/* Order Buttons */}
-        <div className="flex flex-col space-y-4">
-          <button className="bg-black text-white px-4 py-4 w-full">
-            Proceed to Order
-          </button>
-          <Link href="/shop">
-            <button className="bg-gray-100 text-black px-4 py-4 w-full border border-gray-300">
-              Back to Shopping
-            </button>
-          </Link>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

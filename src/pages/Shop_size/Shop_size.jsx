@@ -13,6 +13,14 @@ function Shop_size() {
 
   const databases = new Databases(client);
 
+  // Function to generate a random light color
+  const generateRandomLightColor = () => {
+    const r = Math.floor(Math.random() * 100 + 100);
+    const g = Math.floor(Math.random() * 100 + 100);
+    const b = Math.floor(Math.random() * 100 + 100);
+    return `rgb(${r}, ${g}, ${b})`;
+  };
+
   useEffect(() => {
     // Fetch sizes and products from Appwrite
     const fetchSizesAndProducts = async () => {
@@ -42,6 +50,7 @@ function Shop_size() {
               id: matchingProduct.$id,
               size: `${size.width} x ${size.height}`,
               image: imageUrl,
+              color: generateRandomLightColor(), // Assign a random light color
             };
           }
           return null;
@@ -58,11 +67,9 @@ function Shop_size() {
 
   // Handle navigation to /shop with size query parameter
   const handleShopNowClick = (size) => {
-    // Remove spaces around the 'x' in the size string
     const formattedSize = size.replace(/\s+/g, '');
     router.push(`/shop?size=${formattedSize}`);
   };
-  
 
   return (
     <div className="text-center">
@@ -71,7 +78,8 @@ function Shop_size() {
         {cards.map((card) => (
           <div
             key={card.id}
-            className="w-[250px] bg-pink-600 rounded-md flex flex-col justify-between items-center pb-6 px-5"
+            style={{ backgroundColor: card.color }} // Apply the random color
+            className="w-[250px] rounded-md flex flex-col justify-between items-center pb-6 px-5"
           >
             <img
               src={card.image}
@@ -81,7 +89,7 @@ function Shop_size() {
             <h3 className="text-white mt-2">{card.size}</h3>
             <button
               className="bg-white text-black py-2 px-5 rounded-lg mt-2"
-              onClick={() => handleShopNowClick(card.size)} // Pass the size to the handler
+              onClick={() => handleShopNowClick(card.size)}
             >
               Shop Now
             </button>

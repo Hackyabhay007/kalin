@@ -117,7 +117,7 @@ function Nav() {
 
         {/* Logo */}
         <Image
-          src="https://s3-alpha-sig.figma.com/img/c9a3/651f/090c30b7dec85d63787dbeeb98e5322d?Expires=1730678400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=gLWPMgr9kInHLYkRA37zJB7-yKtjoVH-JywCOxCMgeWKjif6w2Xh8Y5jdg6~z6DpdDNl6~aASIAv1KCNmO90ivTin4bIUapsfQedp2LEElFVNt~B1nMpDfk8QiiRPwlNIb8DYDR07idFREd4z3qS9GLxT4e4gd05FwKizZG3PcKv0iiQw~Q0VnGC9jKp2cYDrjPd7WWCGc9VpIrJaPGuD79cU73yFBf7sTs-1QsJi8OcCkhzKBApKBY1raBVuhkooUfsAW24OuR1JVez9oMTy-kxeO2~RKpAmBnKVuqsjDEP51GrjSgmR9ko4~5pS19JyJplYVadc9KjWs0mKDrQjg__"
+          src="/local/images/logo.png"
           alt=""
           className="w-16 mx-20"
           width={200}
@@ -184,9 +184,7 @@ function Nav() {
 
         {/* Right Side - Icons */}
 
-        <button className="text-black hover:text-gray-800">
-          <i className="ri-heart-line text-2xl"></i>
-        </button>
+        
         <Link href="/cart">
           <button className="text-black hover:text-gray-800">
             <i className="ri-shopping-bag-line text-2xl"></i>
@@ -254,17 +252,32 @@ function Nav() {
           <input
             type="text"
             placeholder="Search..."
+            value={searchQuery}
+            onChange={handleSearchInputChange}
+            onKeyDown={handleSearchEnter}
             className="border border-gray-300 w-screen rounded-full ring-1 ring-black py-1 px-3 pl-10 focus:outline-none"
           />
           <i className="ri-search-line absolute left-6 top-1/2   transform -translate-y-1/2"></i>
+          
+          {searchQuery && suggestions.length > 0 && (
+            <ul className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded shadow-lg z-10">
+              {suggestions.map((suggestion, index) => (
+                <li
+                  key={index}
+                  className="p-2 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       )}
 
       {/* Right Side - Icons for Mobile */}
       <div className="md:hidden flex items-center  gap-3 mr-4">
-        <button className="text-black hover:text-gray-800">
-          <i className="ri-heart-line text-2xl"></i>
-        </button>
+       
         <Link href="/cart">
           <button className="text-black hover:text-gray-800">
             <i className="ri-shopping-bag-line text-2xl"></i>

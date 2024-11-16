@@ -1,10 +1,10 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 export const currencySlice = createSlice({
-  name: 'currency',
+  name: "currency",
   initialState: {
     conversionRate: 1, // Default conversion rate (1 INR to 1 INR)
-    selectedCurrency: 'INR', // Default selected currency
+    selectedCurrency: "INR", // Default selected currency
     lastUpdated: null, // Timestamp of last update
   },
   reducers: {
@@ -14,13 +14,17 @@ export const currencySlice = createSlice({
     },
     setSelectedCurrency: (state, action) => {
       state.selectedCurrency = action.payload;
-      // If toggling to INR, set conversion rate to 1, as 1 INR = 1 INR
-      if (action.payload === 'INR') {
+      // Reset conversion rate for INR
+      if (action.payload === "INR") {
         state.conversionRate = 1;
       }
+    },
+    resetCurrency: (state) => {
+      state.conversionRate = 1;
+      state.selectedCurrency = "INR";
     },
   },
 });
 
-export const { setConversionRate, setSelectedCurrency } = currencySlice.actions;
+export const { setConversionRate, setSelectedCurrency, resetCurrency } = currencySlice.actions;
 export default currencySlice.reducer;

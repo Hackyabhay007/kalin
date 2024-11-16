@@ -11,7 +11,7 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     // Fetch or update currency conversion rate when the app loads
-    fetchOrUpdateConversionRate(dispatch);
+    fetchOrUpdateConversionRate(dispatch,"INR", "USD");
   }, [dispatch]);
 
   return (

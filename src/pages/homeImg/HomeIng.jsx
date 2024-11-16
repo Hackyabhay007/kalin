@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Client, Databases } from 'appwrite';
-import Loader from '../loader/Loader';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { Client, Databases } from "appwrite";
+import Loader from "../loader/Loader";
 
 // Initialize Appwrite client
 const client = new Client();
@@ -32,17 +32,21 @@ function HomeImg() {
         }));
         setImagesData(data);
       } catch (error) {
-        if (error.name === 'FetchError' || error.message.includes('Failed to fetch')) {
-          console.warn('Network issue: Unable to fetch data. Please check your connection.');
+        if (
+          error.name === "FetchError" ||
+          error.message.includes("Failed to fetch")
+        ) {
+          console.warn(
+            "Network issue: Unable to fetch data. Please check your connection."
+          );
         } else {
-          console.error('Error fetching data:', error);
+          console.error("Error fetching data:", error);
         }
       }
     };
-  
+
     fetchData();
   }, []);
-  
 
   // Image slider effect
   useEffect(() => {
@@ -68,7 +72,7 @@ function HomeImg() {
   };
 
   if (imagesData.length === 0) {
-    return <Loader/>;
+    return <Loader />;
   }
 
   return (
@@ -81,11 +85,17 @@ function HomeImg() {
         className="z-0"
       />
       <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 text-center text-white z-10">
-        <h2 className="text-4xl md:text-6xl lg:text-7xl">{imagesData[currentIndex].title}</h2>
-        <p className="mb-2 text-xl md:text-2xl lg:text-4xl my-5">{imagesData[currentIndex].tagline}</p>
+        <h2 className="text-4xl md:text-6xl lg:text-7xl">
+          {imagesData[currentIndex].title}
+        </h2>
+        <p className="mb-2 text-xl md:text-2xl lg:text-4xl my-5">
+          {imagesData[currentIndex].tagline}
+        </p>
         <button
           className="bg-black my-5 text-white rounded-none px-6 py-1 md:px-10 md:py-2 hover:bg-white hover:text-black transition duration-300"
-          onClick={() => (window.location.href = `${imagesData[currentIndex].slug}`)}
+          onClick={() =>
+            (window.location.href = `${imagesData[currentIndex].slug}`)
+          }
         >
           {imagesData[currentIndex].buttonText}
         </button>
@@ -95,23 +105,23 @@ function HomeImg() {
           <div
             key={index}
             className={`h-2 w-2 rounded-full cursor-pointer transition-all duration-300 ${
-              index === currentIndex ? 'bg-white' : 'bg-gray-400'
+              index === currentIndex ? "bg-white" : "bg-gray-400"
             }`}
             onClick={() => setCurrentIndex(index)}
           ></div>
         ))}
       </div>
       <button
-        className="absolute left-5 top-1/2 transform -translate-y-1/2 text-2xl md:text-3xl backdrop-blur-sm bg-white/10 text-white p-2 rounded-full z-10"
+        className="absolute left-5 top-1/2 transform -translate-y-1/2 text-2xl md:text-xl backdrop-blur-sm bg-white/10 text-white/90 p-1  z-10 border-2 border-dashed border-white/30  hover:border-double hover:bg-white/40"
         onClick={prevImage}
       >
-        &lt;
+        <i class="ri-arrow-left-wide-line"></i>
       </button>
       <button
-        className="absolute right-5 top-1/2 transform -translate-y-1/2 text-2xl md:text-3xl backdrop-blur-sm bg-white/10 text-white p-2 rounded-full z-10"
+        className="absolute right-5 top-1/2 transform -translate-y-1/2 text-2xl md:text-xl backdrop-blur-sm bg-white/10 text-white/90 p-1  z-10 border-2 border-dashed border-white/30   hover:border-double hover:bg-white/40"
         onClick={nextImage}
       >
-        &gt;
+        <i class="ri-arrow-right-wide-line"></i>
       </button>
     </div>
   );

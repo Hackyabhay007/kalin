@@ -8,13 +8,14 @@ import { fetchOrUpdateConversionRate } from "@/utils/currencyUtils";
 import { useCart } from "@/context/CartContext";
 import { useRouter } from "next/router";
 import { debounce } from "lodash";
-
+import { databases } from "@/appwrite";
 function Nav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchVisible, setSearchVisible] = useState(false);
   const [userEmail, setUserEmail] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [colors, setColors] = useState([]);
   const router = useRouter();
   const isLoggedIn = Boolean(userEmail);
   const { cartItems } = useCart();
@@ -28,12 +29,21 @@ function Nav() {
     }
   }, []);
 
-  const selectedCurrency = useSelector((state) => state.currency.selectedCurrency);
+  const { selectedCurrency } = useSelector((state) => state.currency);
+
+  // Reset to default currency on page load
+  useEffect(() => {
+    dispatch(setSelectedCurrency("INR"));
+  }, [dispatch]);
 
   const handleCurrencyChange = async (e) => {
     const newCurrency = e.target.value;
     dispatch(setSelectedCurrency(newCurrency));
-    await fetchOrUpdateConversionRate(dispatch, "INR", newCurrency); // assuming INR as base
+
+    // Fetch conversion rate if changing to a currency other than INR
+    if (newCurrency !== "INR") {
+      await fetchOrUpdateConversionRate(dispatch, "INR", newCurrency); // INR is the base
+    }
   };
 
   const fetchSuggestions = debounce(async (query) => {
@@ -62,22 +72,53 @@ function Nav() {
   const handleSuggestionClick = (suggestion) => {
     setSearchQuery("");
     setSuggestions([]);
-    router.push({
-      pathname: "/shop",
-      query: { category: suggestion },
-    });
+    const [type, value] = suggestion.split(": ").map((s) => s.trim());
+  
+    switch (type) {
+      case "Color":
+        router.push(`/shop?color=${value}`);
+        break;
+      case "Product":
+        router.push(`/shop/product_view/${value}`);
+        break;
+      case "Category":
+      default:
+        router.push(`/shop?category=${value}`);
+        break;
+    }
   };
+ const fetchColors = async () => {
+  try {
+   
+    const res = await databases.listDocuments(
+      process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID,
+      process.env.NEXT_PUBLIC_APPWRITE_COLORS_COLLECTION_ID
+    );
 
+    console.log("Fetched Colors:", res.documents);
+    const colorNames = res.documents.map((doc) => doc.name.toLowerCase());
+    setColors(colorNames);
+  } catch (error) {
+    console.error("Error fetching colors:", error.message);
+  }
+};
+ 
   const handleSearchEnter = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
-      router.push({
-        pathname: "/shop",
-        query: { category: searchQuery }, // Redirect to the shop page with search query
-      });
+      const query = searchQuery.trim().toLowerCase();
+  
+      
+      if (colors.includes(query)) {
+        router.push(`/shop?color=${query}`);
+      } else {
+        // If not a color, default to category
+        router.push(`/shop?category=${query}`);
+      }
+  
       setSuggestions([]); // Clear suggestions after search
     }
   };
-
+   
   const toggleMenu = () => {
     setMenuOpen((prev) => !prev);
   };
@@ -85,12 +126,13 @@ function Nav() {
   const toggleSearch = () => {
     setSearchVisible((prev) => !prev);
   };
+  
   return (
-    <nav className="bg-white shadow-lg flex  justify-between gap-10 text-sm text-black items-center py-1">
+    <nav className="bg-white shadow-lg flex justify-between gap-10 text-sm text-black items-center py-1">
       {/* Left Side - Logo and Mobile Menu */}
       <div className="flex items-center">
         {/* Mobile Menu Icon and Search Icon */}
-        <div className="md:hidden flex items-center">
+        <div className="lg:hidden flex items-center">
           <button
             onClick={toggleMenu}
             className="p-2 focus:outline-none relative"
@@ -119,14 +161,14 @@ function Nav() {
         <Image
           src="/local/images/logo.png"
           alt=""
-          className="w-16 mx-20"
+          className="w-16 ml-24 md:ml-64 lg:mx-10"
           width={200}
           height={200}
         />
       </div>
 
       {/* Center - Navigation Links (Desktop) */}
-      <div className="flex-grow hidden md:flex justify-end pr-20  items-center gap-8">
+      <div className="flex-grow hidden lg:flex justify-end pr-20  items-center gap-8">
         <Link href="/" className="text-black hover:text-gray-500">
           Home
         </Link>
@@ -145,7 +187,7 @@ function Nav() {
       </div>
 
       {/* Search Input & Currency Dropdown (Desktop) */}
-      <div className="hidden md:flex gap-5">
+      <div className="hidden lg:flex gap-5">
       <div className="relative">
           <input
             type="text"
@@ -216,7 +258,7 @@ function Nav() {
 
       {/* Mobile Dropdown Menu */}
       {menuOpen && (
-        <div className="absolute top-16 left-0 right-0 bg-white shadow-md p-4 z-50 md:hidden">
+        <div className="absolute top-16 left-0 right-0 bg-white shadow-md p-4 z-50 lg:hidden">
           <div className="flex flex-col items-center gap-4">
             <Link href="/" className="text-black hover:text-gray-800">
               Home
@@ -248,7 +290,7 @@ function Nav() {
 
       {/* Search Input for Mobile */}
       {searchVisible && (
-        <div className="absolute top-16 left-1/2 w-screen transform -translate-x-1/2 bg-white shadow-md p-4 z-50 md:hidden flex items-center gap-2">
+        <div className="absolute top-16 left-1/2 w-screen transform -translate-x-1/2 bg-white shadow-md p-4 z-50 lg:hidden flex items-center gap-2">
           <input
             type="text"
             placeholder="Search..."
@@ -276,7 +318,7 @@ function Nav() {
       )}
 
       {/* Right Side - Icons for Mobile */}
-      <div className="md:hidden flex items-center  gap-3 mr-4">
+      <div className="lg:hidden flex items-center  gap-3 mr-4">
        
         <Link href="/cart">
           <button className="text-black hover:text-gray-800">

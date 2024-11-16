@@ -65,6 +65,7 @@ function Blog_Cart() {
           const imageUrl = `https://cloud.appwrite.io/v1/storage/buckets/${process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID}/files/${blog.image}/view?project=${process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID}`;
           return (
             <div key={blog.$id} className="no-border bg-transparent p-4">
+              <Link href={`/Blog/${blog.$id}`} >
               <Image
                 src={imageUrl}
                 alt={blog.title}
@@ -75,8 +76,11 @@ function Blog_Cart() {
               />
               
               <p className="text-sm mt-2">{truncateDescription(blog.content)}</p>
-              <Link href={`/Blog/${blog.$id}`} className="text-sm underline mt-2 block">
-                Read more
+              
+              <p className="text-sm underline mt-2 block">
+              Read more
+              </p>
+                
               </Link>
             </div>
           );

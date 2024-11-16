@@ -36,11 +36,10 @@ export default async function handler(req, res) {
 
     // Combine all results (categories, products, colors) into a single suggestions array
     const suggestions = [
-      ...categoryResults.documents.map((doc) => doc.category),
-      ...productResults.documents.map((doc) => doc.product_name),
-      ...colorResults.documents.map((doc) => doc.color_name),
+      ...categoryResults.documents.map((doc) => `Category: ${doc.category}`),
+      ...productResults.documents.map((doc) => `Product: ${doc.$id}`),
+      ...colorResults.documents.map((doc) => `Color: ${doc.name}`),
     ];
-
     res.status(200).json(suggestions);  // Return the suggestions as JSON
   } catch (error) {
     console.error("Error fetching search results:", error);

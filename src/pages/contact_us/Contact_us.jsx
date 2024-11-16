@@ -1,13 +1,26 @@
-import React, { useState } from 'react';
+"use client";
+
+import React, { useState } from "react";
+import { Client, Databases } from "appwrite";
 
 function Contact_us() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
   });
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // Initialize Appwrite client
+  const client = new Client();
+  client
+    .setEndpoint(process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT) // Your Appwrite API endpoint
+    .setProject(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID); // Your Appwrite Project ID
+
+  const databases = new Databases(client);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,29 +33,55 @@ function Contact_us() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('/api/sendEmail', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    });
+    const { name, email, phone, message } = formData;
 
-    const data = await response.json();
+    // Sanitize phone number by removing non-numeric characters
+    const sanitizedPhone = phone.replace(/\D/g, ""); // Removes all non-numeric characters
 
-    if (response.ok) {
-      setStatus('Your message has been sent!');
-      setFormData({ name: '', email: '', phone: '', message: '' }); // Reset form after successful submit
-    } else {
-      setStatus(`Error: ${data.message}`);
+    // Validation for phone number (ensure it's exactly 10 digits)
+    if (sanitizedPhone.length !== 10) {
+      setStatus("Phone number must be exactly 10 digits.");
+      return;
     }
+
+    setLoading(true);
+    try {
+      // Add form data to the Appwrite 'Contact' collection
+      await databases.createDocument(
+        process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID,
+        process.env.NEXT_PUBLIC_APPWRITE_CONTACT_COLLECTION_ID,
+        "unique()", // Auto-generate a unique ID
+        {
+          name,
+          email,
+          number: sanitizedPhone, // Store phone number as a string
+          message,
+        }
+      );
+
+      setStatus("Your message has been sent!");
+      setFormData({ name: "", email: "", phone: "", message: "" }); // Reset form after success
+      setShowPopup(true); // Show the popup on successful submission
+    } catch (error) {
+      setStatus(`Error: ${error.message}`);
+      console.error("Error saving data to Appwrite:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePopupClose = () => {
+    setShowPopup(false); // Close the popup when OK is clicked
   };
 
   return (
     <div className="w-fit h-auto bg-white text-black">
       {/* Image Section */}
-      <div className=" w-screen h-64 md:h-screen bg-cover bg-bottom  mb-10" style={{ backgroundImage: "url('/local/images/contact_home.jpeg')" }} />
-      
+      <div
+        className="w-screen h-64 md:h-screen bg-cover bg-bottom mb-10"
+        style={{ backgroundImage: "url('/local/images/contact_home.jpeg')" }}
+      />
+
       {/* Header Section */}
       <div className="text-start pl-0 md:pl-44 mx-4">
         <h1 className="font-bold text-xl mb-2">Enquire Now</h1>
@@ -134,6 +173,31 @@ function Contact_us() {
 
       {/* Status Message */}
       {status && <p className="text-center text-sm mt-4">{status}</p>}
+
+      {/* Popup */}
+      {showPopup && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50">
+          <div className="bg-white p-6  w-96 text-center border border-black">
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <div className=" border-t-4 border-b-4 border-black w-8 h-8 border-t-black rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <>
+                 <h1 className="text-3xl font-bold mb-5">Thank you!</h1>
+                 <i class="ri-mail-ai-line text-5xl text-gray-800"></i>
+                <p className="text-gray-700 font-semibold my-5">We will contact you soon!</p>
+                <button
+                  onClick={handlePopupClose}
+                  className="mt-4 px-6 py-2 border border-black rounded-none bg-black text-white font-semibold hover:bg-white hover:text-black"
+                >
+                  OK
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
